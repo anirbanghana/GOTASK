@@ -11,7 +11,7 @@ const EditTask = ({ task, setTaskEdit, handleUpdate }) => {
 
   const updateText = () => {
     handleUpdate(inputValue);
-    setTaskEdit(false); // Close the editing interface after updating
+    setTaskEdit(false);
   };
 
   return (
@@ -24,7 +24,6 @@ const EditTask = ({ task, setTaskEdit, handleUpdate }) => {
           padding="0.2rem"
           align="center"
         >
-          {/* Corrected the onClick event handler */}
           <Body2 onClick={updateText}>Update</Body2>
         </FlexBox>
         <FlexBox borderRadius="10px" backgroundColor="blue" padding="10px">

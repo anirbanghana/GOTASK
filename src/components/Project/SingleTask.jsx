@@ -43,6 +43,7 @@ const SingleTask = ({
   setTaskHighlight,
   onEdit,
   onDelete,
+  editTask,
 }) => {
   const [isHighlighted, setHighlighted] = useState(false);
   const [optionOpen, setOptionOpen] = useState(false);

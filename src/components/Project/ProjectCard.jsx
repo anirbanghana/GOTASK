@@ -105,7 +105,7 @@ const ProjectCard = ({
     setSelectedTaskIndex(index);
     setUpdatedTaskText(filteredTask[index - 1].task);
   };
-  // const EditTask = () => {};
+
   const handleUpdate = (updatedValue) => {
     setEditedHeading(updatedValue);
     setModalOpen(false);
@@ -121,7 +121,7 @@ const ProjectCard = ({
     const updatedTasks = [...tasks];
     updatedTasks[index].task = updatedTask;
     setTasks(updatedTasks);
-    setTaskEdit(false); // Close the editing interface after updating
+    setTaskEdit(false);
   };
 
   const handleTaskStatusChange = (index) => {

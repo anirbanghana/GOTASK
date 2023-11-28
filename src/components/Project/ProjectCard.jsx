@@ -1,9 +1,11 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
 import styled from "@emotion/styled";
 import FlexBox from "../../common/ui/FlexBox";
 import SingleTask from "./SingleTask";
 import { H3 } from "../../common/ui/Headings";
+import Edit from "../Edit";
+import Modal from "../../common/ui/Modal";
 
 const Wrapper = styled(FlexBox)`
   flex-direction: column;
@@ -13,7 +15,7 @@ const Wrapper = styled(FlexBox)`
   border-radius: 1rem;
   row-gap: 1rem;
   min-width: 23rem;
-  max-width:30rem;
+  max-width: 30rem;
   @media (max-width: 768px) {
     width: 100%;
     min-width: 20rem;
@@ -41,54 +43,50 @@ const AddingSingleTask = styled(FlexBox)`
   padding: 1rem;
 `;
 
-const TopOption=styled(FlexBox)`
-cursor:pointer;
-flex-direction:column;
-position:relative;
-`
-const EditDeleteContainer=styled(FlexBox)`
-flex-direction:column;
-padding:1rem;
-position:absolute;
-background-color:white;
-box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.1);
-border-radius:0.5rem;
-row-gap:0.5rem;
-top:60%;
-right:30%;
-`
+const TopOption = styled(FlexBox)`
+  cursor: pointer;
+  flex-direction: column;
+  position: relative;
+`;
+const EditDeleteContainer = styled(FlexBox)`
+  flex-direction: column;
+  padding: 1rem;
+  position: absolute;
+  background-color: white;
+  box-shadow: 5px 5px 5px 0px rgba(0, 0, 0, 0.1);
+  border-radius: 0.5rem;
+  row-gap: 0.5rem;
+  top: 60%;
+  right: 30%;
+`;
 
-const ProjectCard = ({ filterType, heading, key, }) => {
+const ProjectCard = ({
+  projects,
+  setProjects,
+  filterType,
+  heading,
+  key,
+  deleteProject,
+  searchItem,
+}) => {
   const [tasks, setTasks] = useState([]);
   const [inputText, setInputText] = useState("");
-  const [editDeleteBox,setEditDeleteBox]=useState(false);
+  const [editDeleteBox, setEditDeleteBox] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editedHeading, setEditedHeading] = useState(heading.name || "");
+  const [selectedTaskIndex, setSelectedTaskIndex] = useState(null);
+  const [updatedTaskText, setUpdatedTaskText] = useState("");
+  const [taskEdit, setTaskEdit] = useState(false);
 
-  const projectClick=()=>{
-    if (filterType === 'Edit') {
-      setModalVisible(true);
-      setSelectedProject(projects[index].name);
-    } else if (filterType === 'Delete') {
-      alert(
-        'Delete Project',
-        `Are you sure you want to delete ${projects[index].name}`,
-        [
-          {
-            text: 'Cancel',
-            style: 'cancel',
-          },
-          {
-            text: 'Delete',
-            style: 'destructive',
-            onClick: () => {
-              const updatedProjects = [...projects];
-              updatedProjects.splice(index, 1);
-              setProjects(updatedProjects);
-            },
-          },
-        ],
-        {cancelable: false},
-);}
-  }
+  const projectClick = (item, heading) => {
+    if (item === "Edit") {
+      setModalOpen(!modalOpen);
+      console.log("edit is clicked");
+    } else if (item === "Delete") {
+      console.log(heading.id);
+      deleteProject(heading.id);
+    }
+  };
 
   const handleCheckBoxClick = () => {
     if (inputText.trim()) {
@@ -97,8 +95,25 @@ const ProjectCard = ({ filterType, heading, key, }) => {
         isChecked: false,
       };
       setTasks([...tasks, newTask]);
-      setInputText(""); // Clear input field after adding task
+      setInputText("");
     }
+  };
+
+  const onEdit = (index) => {
+    setModalOpen(true);
+    setSelectedTaskIndex(index);
+    setUpdatedTaskText(filteredTask[index - 1].task);
+  };
+
+  const handleUpdate = (updatedValue) => {
+    setEditedHeading(updatedValue);
+    setModalOpen(false);
+  };
+
+  const onDelete = (index) => {
+    const updatedTasks = [...tasks];
+    updatedTasks.splice(index, 1);
+    setTasks(updatedTasks);
   };
 
   const handleTaskStatusChange = (index) => {
@@ -113,16 +128,22 @@ const ProjectCard = ({ filterType, heading, key, }) => {
     setTasks(updatedTasks2);
   };
 
-  // Filter tasks based on filterType
   const filterTasks = () => {
-    if (filterType === "All") {
-      return tasks;
-    } else if (filterType === "Complete") {
-      return tasks.filter((task) => task.isChecked);
+    let filteredTasks = tasks;
+
+    if (filterType === "Complete") {
+      filteredTasks = filteredTasks.filter((task) => task.isChecked);
     } else if (filterType === "Outstanding") {
-      return tasks.filter((task) => task.isHighlighted);
+      filteredTasks = filteredTasks.filter((task) => task.isHighlighted);
     }
-    return tasks;
+
+    if (searchItem) {
+      filteredTasks = filteredTasks.filter((task) =>
+        task.task.toLowerCase().includes(searchItem.toLowerCase())
+      );
+    }
+
+    return filteredTasks;
   };
 
   const filteredTask = filterTasks();
@@ -130,13 +151,28 @@ const ProjectCard = ({ filterType, heading, key, }) => {
   return (
     <Wrapper>
       <HeadBox>
-        <H3>{heading}</H3>
+        <H3>{editedHeading}</H3>
         <TopOption>
-        <MoreHorizOutlinedIcon onClick={()=>{setEditDeleteBox(!editDeleteBox)}}/>
-        {editDeleteBox &&<EditDeleteContainer>
-          <p onClick={projectClick("Edit")}>Edit</p>
-          <p onClick={projectClick("Delete")}>Delete</p>
-        </EditDeleteContainer>}
+          <MoreHorizOutlinedIcon
+            onClick={() => {
+              setEditDeleteBox(!editDeleteBox);
+            }}
+          />
+          {editDeleteBox && (
+            <EditDeleteContainer>
+              <p onClick={() => projectClick("Edit", heading)}>Edit</p>
+              <p onClick={() => projectClick("Delete", heading)}>Delete</p>
+            </EditDeleteContainer>
+          )}
+          {modalOpen && (
+            <Modal>
+              <Edit
+                heading={heading}
+                setModalOpen={setModalOpen}
+                handleUpdate={handleUpdate}
+              />
+            </Modal>
+          )}
         </TopOption>
       </HeadBox>
       <AddingSingleTask>
@@ -154,16 +190,18 @@ const ProjectCard = ({ filterType, heading, key, }) => {
           }}
         />
       </AddingSingleTask>
+
       <ListWrapper>
         {filteredTask.map((todo, index) => (
           <SingleTask
-            key={index}
+            key={todo.id}
             text={todo.task}
             isChecked={todo.isChecked}
             isHighlighted={todo.isHighlighted}
-            // Pass the function to handle task status change
             setTaskStatus={() => handleTaskStatusChange(index)}
-            setTaskHighlight={()=>handleTaskHighlightChange(index)}
+            setTaskHighlight={() => handleTaskHighlightChange(index)}
+            onEdit={() => onEdit(index)}
+            onDelete={() => onDelete(index)}
           />
         ))}
       </ListWrapper>

@@ -37,18 +37,29 @@ const HrBox = styled(FlexBox)`
   background-color: #e1e1e1;
 `;
 
-const ViewGrid = ({projects,filterType}) => {
-
-
-
+const ViewGrid = ({ projects, filterType, setProjects, searchItem }) => {
+  const deleteProject = (projectId) => {
+    const updatedProjects = projects.filter(
+      (project) => project.id !== projectId
+    );
+    setProjects(updatedProjects);
+  };
   return (
     <Wrapper column>
       <FlexBox column rowGap="1rem">
         <ChipToday isToday="1" />
         <FlexScroll>
-        {projects.map((item, index) => (
-    <ProjectCard key={index} filterType={filterType} heading={item} projects={projects} />
-  ))}
+          {projects.map((item, index) => (
+            <ProjectCard
+              key={index}
+              filterType={filterType}
+              heading={item}
+              projects={projects}
+              setProjects={setProjects}
+              deleteProject={deleteProject}
+              searchItem={searchItem}
+            />
+          ))}
         </FlexScroll>
       </FlexBox>
       <FlexBox column rowGap="1rem">
@@ -59,9 +70,16 @@ const ViewGrid = ({projects,filterType}) => {
           </HrBox>
         </SectionWithChipAndHr>
         <FlexScroll>
-        {projects.map((item, index) => (
-    <ProjectCard key={index} filterType={filterType} heading={item} />
-  ))}
+          {projects.map((item, index) => (
+            <ProjectCard
+              key={index}
+              filterType={filterType}
+              heading={item}
+              projects={projects}
+              setProjects={setProjects}
+              searchItem={searchItem}
+            />
+          ))}
         </FlexScroll>
       </FlexBox>
     </Wrapper>
@@ -69,4 +87,3 @@ const ViewGrid = ({projects,filterType}) => {
 };
 
 export default ViewGrid;
-

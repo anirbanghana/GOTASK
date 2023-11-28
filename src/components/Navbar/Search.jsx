@@ -23,7 +23,7 @@ const SearchBoxW = styled(FlexBox)`
   column-gap: 0.5rem;
   width: 25rem;
   border: 1px solid #d6d6d6;
-  
+
   @media (max-width: 900px) {
     width: 8rem;
   }
@@ -39,14 +39,24 @@ const Input = styled.input`
   }
 `;
 
-const SearchBox = ({filterType,setFilterType}) => {
+const SearchBox = ({
+  filterType,
+  setFilterType,
+  searchItem,
+  setSearchItem,
+}) => {
   return (
     <Wrapper>
       <SearchBoxW>
         <SearchIcon />
-        <Input type="text" placeholder="Search" />
+        <Input
+          type="text"
+          placeholder="Search"
+          value={searchItem}
+          onChange={(e) => setSearchItem(e.target.value)}
+        />
       </SearchBoxW>
-      <Filter filterType={filterType} setFilterType={setFilterType}/>
+      <Filter filterType={filterType} setFilterType={setFilterType} />
     </Wrapper>
   );
 };

@@ -52,7 +52,14 @@ const ProfileBox = styled(FlexBox)`
   }
 `;
 
-const Navbar = ({ filterType, setFilterType, projects, setProjects }) => {
+const Navbar = ({
+  filterType,
+  setFilterType,
+  projects,
+  setProjects,
+  searchItem,
+  setSearchItem,
+}) => {
   const [open, setOpen] = useState(false);
   const [close, setClose] = useState(true);
   const HamburgerClick = () => {};
@@ -62,14 +69,19 @@ const Navbar = ({ filterType, setFilterType, projects, setProjects }) => {
       <Logo>
         <img src="src\assets\GoTask.png" alt="GoTask" width="90px" />
       </Logo>
-      <SearchBox filterType={filterType} setFilterType={setFilterType} />
+      <SearchBox
+        filterType={filterType}
+        setFilterType={setFilterType}
+        searchItem={searchItem}
+        setSearchItem={setSearchItem}
+      />
 
       <ProfileBox>
         <NewProjectButton projects={projects} setProjects={setProjects} />
       </ProfileBox>
 
       <ProfileBox>
-        <ProfileComponent/>
+        <ProfileComponent />
       </ProfileBox>
 
       {close && (

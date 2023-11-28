@@ -36,7 +36,14 @@ const OptionBox = styled(FlexBox)`
   /* Add styling for the OptionBox component */
 `;
 
-const SingleTask = ({ text, isChecked, setTaskStatus ,setTaskHighlight}) => {
+const SingleTask = ({
+  text,
+  isChecked,
+  setTaskStatus,
+  setTaskHighlight,
+  onEdit,
+  onDelete,
+}) => {
   const [isHighlighted, setHighlighted] = useState(false);
   const [optionOpen, setOptionOpen] = useState(false);
   const optionRef = useRef(null);
@@ -57,7 +64,11 @@ const SingleTask = ({ text, isChecked, setTaskStatus ,setTaskHighlight}) => {
 
   const handleDocumentClick = (e) => {
     // Close the OptionBox if the click is outside the OptionBox
-    if (optionOpen && optionRef.current && !optionRef.current.contains(e.target)) {
+    if (
+      optionOpen &&
+      optionRef.current &&
+      !optionRef.current.contains(e.target)
+    ) {
       setOptionOpen(false);
     }
   };
@@ -84,7 +95,11 @@ const SingleTask = ({ text, isChecked, setTaskStatus ,setTaskHighlight}) => {
         <MoreHorizOutlinedIcon onClick={handleOptionIconClick} />
         {optionOpen && (
           <OptionBox ref={optionRef}>
-            <ClickAblesOpt onHighlightClick={handleHighlightClick} />
+            <ClickAblesOpt
+              onHighlightClick={handleHighlightClick}
+              onEdit={onEdit}
+              onDelete={onDelete}
+            />
           </OptionBox>
         )}
       </CRUDbox>

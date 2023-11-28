@@ -6,6 +6,7 @@ import SingleTask from "./SingleTask";
 import { H3 } from "../../common/ui/Headings";
 import Edit from "../Edit";
 import Modal from "../../common/ui/Modal";
+import EditTask from "./EditTask";
 
 const Wrapper = styled(FlexBox)`
   flex-direction: column;
@@ -100,11 +101,11 @@ const ProjectCard = ({
   };
 
   const onEdit = (index) => {
-    setModalOpen(true);
+    setTaskEdit(!taskEdit);
     setSelectedTaskIndex(index);
     setUpdatedTaskText(filteredTask[index - 1].task);
   };
-
+  // const EditTask = () => {};
   const handleUpdate = (updatedValue) => {
     setEditedHeading(updatedValue);
     setModalOpen(false);
@@ -114,6 +115,13 @@ const ProjectCard = ({
     const updatedTasks = [...tasks];
     updatedTasks.splice(index, 1);
     setTasks(updatedTasks);
+  };
+
+  const handleTaskUpdate = (index, updatedTask) => {
+    const updatedTasks = [...tasks];
+    updatedTasks[index].task = updatedTask;
+    setTasks(updatedTasks);
+    setTaskEdit(false); // Close the editing interface after updating
   };
 
   const handleTaskStatusChange = (index) => {
@@ -165,7 +173,7 @@ const ProjectCard = ({
             </EditDeleteContainer>
           )}
           {modalOpen && (
-            <Modal>
+            <Modal M1 width="20%" height="20%">
               <Edit
                 heading={heading}
                 setModalOpen={setModalOpen}
@@ -175,6 +183,7 @@ const ProjectCard = ({
           )}
         </TopOption>
       </HeadBox>
+
       <AddingSingleTask>
         <input type="checkbox" onChange={handleCheckBoxClick} />
         <input
@@ -193,16 +202,30 @@ const ProjectCard = ({
 
       <ListWrapper>
         {filteredTask.map((todo, index) => (
-          <SingleTask
-            key={todo.id}
-            text={todo.task}
-            isChecked={todo.isChecked}
-            isHighlighted={todo.isHighlighted}
-            setTaskStatus={() => handleTaskStatusChange(index)}
-            setTaskHighlight={() => handleTaskHighlightChange(index)}
-            onEdit={() => onEdit(index)}
-            onDelete={() => onDelete(index)}
-          />
+          <div key={index}>
+            <SingleTask
+              key={todo.id}
+              text={todo.task}
+              isChecked={todo.isChecked}
+              isHighlighted={todo.isHighlighted}
+              setTaskStatus={() => handleTaskStatusChange(index)}
+              setTaskHighlight={() => handleTaskHighlightChange(index)}
+              onEdit={() => onEdit(index)}
+              onDelete={() => onDelete(index)}
+              editTask={() => EditTask(index)}
+            />
+            {taskEdit && (
+              <Modal>
+                <EditTask
+                  setTaskEdit={setTaskEdit}
+                  task={todo.task}
+                  handleUpdate={(updatedTask) =>
+                    handleTaskUpdate(index, updatedTask)
+                  }
+                />
+              </Modal>
+            )}
+          </div>
         ))}
       </ListWrapper>
     </Wrapper>

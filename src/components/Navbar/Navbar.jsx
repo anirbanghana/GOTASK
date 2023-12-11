@@ -51,7 +51,10 @@ const ProfileBox = styled(FlexBox)`
     display: none;
   }
 `;
-
+const Cross = styled(Close)`
+  z-index: 5;
+  position: relative;
+`;
 const Navbar = ({
   filterType,
   setFilterType,
@@ -62,7 +65,6 @@ const Navbar = ({
 }) => {
   const [open, setOpen] = useState(false);
   const [close, setClose] = useState(true);
-  const HamburgerClick = () => {};
 
   return (
     <Wrapper>
@@ -89,20 +91,18 @@ const Navbar = ({
           onClick={() => {
             setOpen(!open);
             setClose(!close);
-            alert(open, close);
           }}
         />
       )}
-      {open && <MobileNav />}
-
       {open && (
-        <Close
+        <Cross
           onClick={() => {
             setClose(!close);
             setOpen(!open);
           }}
         />
       )}
+      {open && <MobileNav />}
     </Wrapper>
   );
 };

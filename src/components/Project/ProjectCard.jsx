@@ -26,6 +26,10 @@ const Wrapper = styled(FlexBox)`
 const ListWrapper = styled(FlexBox)`
   flex-direction: column;
   row-gap: 0.5rem;
+  padding: 1rem;
+  max-height: 200px;
+
+  overflow-y: scroll;
 `;
 
 const HeadBox = styled(FlexBox)`
@@ -112,8 +116,7 @@ const ProjectCard = ({
   };
 
   const onDelete = (index) => {
-    const updatedTasks = [...tasks];
-    updatedTasks.splice(index, 1);
+    const updatedTasks = tasks.filter((task, i) => i !== index);
     setTasks(updatedTasks);
   };
 

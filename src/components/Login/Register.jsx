@@ -116,11 +116,36 @@ const Register = ({ onLoginClick }) => {
     }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Your registration logic goes here
-    console.log("Form submitted:", formData);
-  };
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  try {
+    const response = await fetch(
+      "https://todo-backend-daem.vercel.app/register",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          fullname: formData.fullname,
+          password: formData.password,
+        }),
+      }
+    );
+
+    if (response) {
+      console.log("Registration successful");
+      navigate("/homepage")
+    } else {
+      console.error("Registration failed");
+    }
+  } catch (error) {
+    console.error("Error during registration:", error);
+  }
+};
+
 
   return (
     <Wrapper>
@@ -136,6 +161,7 @@ const Register = ({ onLoginClick }) => {
               name="email"
               value={formData.email}
               onChange={handleChange}
+              required
             />
           </FormGroup>
           <FormGroup>
@@ -145,6 +171,7 @@ const Register = ({ onLoginClick }) => {
               name="fullname"
               value={formData.fullname}
               onChange={handleChange}
+              required
             />
           </FormGroup>
           <FormGroup>
@@ -155,6 +182,7 @@ const Register = ({ onLoginClick }) => {
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
+                required
               />
               <ToggleIcon onClick={togglePasswordVisibility}>
                 {formData.showPassword ? (
@@ -169,7 +197,13 @@ const Register = ({ onLoginClick }) => {
         </Form>
         <RegisterLink>
           Already have an account?{" "}
-          <LoginLink onClick={()=>{navigate("/")}}>Login</LoginLink>
+          <LoginLink
+            onClick={() => {
+              navigate("/");
+            }}
+          >
+            Login
+          </LoginLink>
         </RegisterLink>
       </Container>
     </Wrapper>

@@ -10,6 +10,7 @@ import FormControl from "@mui/material/FormControl";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -107,34 +108,28 @@ const Login = ({ onRegisterClick }) => {
     }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    try {
-      const response = await fetch(
-        "https://todo-backend-daem.vercel.app/login",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email: formData.email,
-            password: formData.password,
-          }),
-        }
-      );
-
-      if (response) {
-        console.log("Login successful");
-        navigate("/homepage");
-      } else {
-        console.error("Login failed");
+  try {
+    const response = await axios.post(
+      "https://todo-backend-daem.vercel.app/login",
+      {
+        email: formData.email,
+        password: formData.password,
       }
-    } catch (error) {
-      console.error("Error during login:", error);
+    );
+
+    if (response.status === 200) {
+      console.log("Login successful");
+      navigate("/homepage");
+    } else {
+      console.error("Login failed");
     }
-  };
+  } catch (error) {
+    console.error("Error during login:", error);
+  }
+};
 
   return (
     <Wrapper column>

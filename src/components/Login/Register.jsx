@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { BsEye, BsEyeSlash } from "react-icons/bs";
 import FlexBox from "../../common/ui/FlexBox";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -72,7 +73,7 @@ const Button = styled.button`
   border-radius: 2rem;
   cursor: pointer;
   width: 12rem;
-  font-weight:700;
+  font-weight: 700;
 `;
 
 const RegisterLink = styled.div`
@@ -99,7 +100,7 @@ const Register = ({ onLoginClick }) => {
     showPassword: false, // State for controlling password visibility
   });
 
-  const navigate=useNavigate();
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -116,36 +117,29 @@ const Register = ({ onLoginClick }) => {
     }));
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  try {
-    const response = await fetch(
-      "https://todo-backend-daem.vercel.app/register",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
+    try {
+      const response = await axios.post(
+        "https://todo-backend-daem.vercel.app/register",
+        {
           email: formData.email,
           fullname: formData.fullname,
           password: formData.password,
-        }),
+        }
+      );
+
+      if (response.status === 201) {
+        console.log("Registration successful");
+        navigate("/login");
+      } else {
+        console.error("Registration failed");
       }
-    );
-
-    if (response) {
-      console.log("Registration successful");
-      navigate("/homepage")
-    } else {
-      console.error("Registration failed");
+    } catch (error) {
+      console.error("Error during registration:", error);
     }
-  } catch (error) {
-    console.error("Error during registration:", error);
-  }
-};
-
+  };
 
   return (
     <Wrapper>

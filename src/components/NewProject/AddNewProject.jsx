@@ -2,11 +2,12 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import FlexBox from "../../common/ui/FlexBox";
 import { IoIosClose } from "react-icons/io";
+import axios from "axios";
 const Wrapper = styled(FlexBox)`
   width: 100%;
   height: 100%;
   justify-content: center;
-  align-items:center;
+  align-items: center;
   background-color: #f6f6f8;
   padding: 2rem;
   overflow-y: auto;
@@ -15,10 +16,10 @@ const Wrapper = styled(FlexBox)`
 `;
 
 const Container = styled(FlexBox)`
-width: fit-content;
+  width: fit-content;
   justify-self: center;
-  align-items:center;
-  row-gap:1rem;
+  align-items: center;
+  row-gap: 1rem;
 `;
 
 const FormGroup = styled(FlexBox)`
@@ -49,7 +50,7 @@ const SubmitButton = styled(FlexBox)`
   cursor: pointer;
   margin: 0.5rem;
   font-weight: bold;
-  align-items:center;
+  align-items: center;
 `;
 
 const Close = styled(IoIosClose)`
@@ -70,13 +71,34 @@ const AddNewProject = ({ close, projects, setProjects }) => {
     setFormData(e.target.value);
   };
 
-  const AdditionProject = () => {
-    // Assuming projects is an array
-    setProjects([...projects, formData]);
-    // Reset formData after adding the new project
-    setFormData("");
-    // Close the modal or perform other actions if needed
-    close();
+  const AdditionProject = async () => {
+    try {
+      if (formData.trim() === "") {
+        alert("Project title cannot be empty");
+        return;
+      }
+      const response = await axios.post(
+        "https://todo-backend-daem.vercel.app/post-todo",
+        {
+          todoName: formData,
+          // userId: "6576aaae6c2e044a510b424e",
+        }
+      );
+      console.log(response.status, "gg");
+      if (response.ok) {
+        // Update the state with the new project
+        console.log("pushed");
+        setProjects([...projects, response.data]);
+        setFormData("");
+        close();
+      } else {
+        console.error("Error adding project:", response.data);
+        alert("Failed to add project. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error adding project:", error);
+      alert("Failed . Please try again.");
+    }
   };
 
   const handleClose = () => {

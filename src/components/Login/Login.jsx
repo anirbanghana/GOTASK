@@ -78,10 +78,10 @@ const RegisterRedirect = styled.span`
 `;
 
 const Logo = styled(FlexBox)`
-background-color:white;
-padding:0.5rem;
-border-radius:1rem;
-box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  background-color: white;
+  padding: 0.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 `;
 
 const Login = ({ onRegisterClick }) => {
@@ -98,7 +98,7 @@ const Login = ({ onRegisterClick }) => {
     password: "",
   });
 
-  const navigate=useNavigate();
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -108,28 +108,36 @@ const Login = ({ onRegisterClick }) => {
     }));
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  const config = {
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
+    },
+  };
 
-  try {
-    const response = await axios.post(
-      "https://todo-backend-daem.vercel.app/login",
-      {
-        email: formData.email,
-        password: formData.password,
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await axios.post(
+        "https://todo-backend-daem.vercel.app/login",
+        {
+          email: formData.email,
+          password: formData.password,
+        },
+        config
+      );
+
+      if (response.ok) {
+        console.log("Login successful");
+        navigate("/homepage");
+      } else {
+        console.error("Login failed");
       }
-    );
-
-    if (response.status === 200) {
-      console.log("Login successful");
-      navigate("/homepage");
-    } else {
-      console.error("Login failed");
+    } catch (error) {
+      console.error("Error during login:", error);
     }
-  } catch (error) {
-    console.error("Error during login:", error);
-  }
-};
+  };
 
   return (
     <Wrapper column>

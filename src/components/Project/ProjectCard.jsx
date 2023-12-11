@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
 import styled from "@emotion/styled";
 import FlexBox from "../../common/ui/FlexBox";
 import SingleTask from "./SingleTask";
 import { H3 } from "../../common/ui/Headings";
+import axios from "axios";
 
 const Wrapper = styled(FlexBox)`
   flex-direction: column;
@@ -13,7 +14,8 @@ const Wrapper = styled(FlexBox)`
   border-radius: 1rem;
   row-gap: 1rem;
   min-width: 23rem;
-  max-width:30rem;
+  max-width: 30rem;
+  
   @media (max-width: 768px) {
     width: 100%;
     min-width: 20rem;
@@ -23,6 +25,9 @@ const Wrapper = styled(FlexBox)`
 const ListWrapper = styled(FlexBox)`
   flex-direction: column;
   row-gap: 0.5rem;
+  overflow-y: auto;
+  max-height: 20rem;
+  padding-bottom:1rem;
 `;
 
 const HeadBox = styled(FlexBox)`
@@ -41,44 +46,97 @@ const AddingSingleTask = styled(FlexBox)`
   padding: 1rem;
 `;
 
-const TopOption=styled(FlexBox)`
-cursor:pointer;
-flex-direction:column;
-position:relative;
-`
-const EditDeleteContainer=styled(FlexBox)`
-flex-direction:column;
-padding:1rem;
-position:absolute;
-background-color:white;
-box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.1);
-border-radius:0.5rem;
-row-gap:0.5rem;
-top:60%;
-right:30%;
-`
+const TopOption = styled(FlexBox)`
+  cursor: pointer;
+  flex-direction: column;
+  position: relative;
+`;
+const EditDeleteContainer = styled(FlexBox)`
+  flex-direction: column;
+  padding: 1rem;
+  position: absolute;
+  background-color: white;
+  box-shadow: 5px 5px 5px 0px rgba(0, 0, 0, 0.1);
+  border-radius: 0.5rem;
+  row-gap: 0.5rem;
+  top: 60%;
+  right: 30%;
+`;
 
-const ProjectCard = ({ filterType, heading, key, }) => {
-  const [tasks, setTasks] = useState([]);
+const dummydata = [
+  {
+    projectName: "work",
+    id: 1,
+    tasks: [
+      {
+        id: "a1",
+        taskname: "buy apple",
+      },
+      {
+        id: "a2",
+        taskname: "buy banan",
+      },
+      {
+        id: "a3",
+        taskname: "buy cat",
+      },
+    ],
+  },
+  {
+    projectName: "personal",
+    id: 2,
+    tasks: [
+      {
+        id: "a1",
+        taskname: "eat apple",
+      },
+      {
+        id: "a2",
+        taskname: "eat banan",
+      },
+      {
+        id: "a3",
+        taskname: " cat farming",
+      },
+    ],
+  },
+];
+
+const ProjectCard = ({ filterType, heading, key,data }) => {
+  const [tasks, setTasks] = useState([{ task: "appleee", isChecked: "0" }]);
   const [inputText, setInputText] = useState("");
-  const [editDeleteBox,setEditDeleteBox]=useState(false);
+  const [editDeleteBox, setEditDeleteBox] = useState(false);
+  // const [data, setData] = useState([]);
 
-  const projectClick=()=>{
-    if (filterType === 'Edit') {
+  // useEffect(() => {
+  //   axios
+  //     .get(
+  //       "https://todo-backend-daem.vercel.app/get-all-todos/6576aaae6c2e044a510b424e"
+  //     )
+  //     .then((response) => {
+  //       setData(response.data.todo);
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error fetching data:", error);
+  //     });
+  // }, []);
+
+  const projectClick = () => {
+    if (filterType === "Edit") {
       setModalVisible(true);
       setSelectedProject(projects[index].name);
-    } else if (filterType === 'Delete') {
+    } else if (filterType === "Delete") {
       alert(
-        'Delete Project',
+        "Delete Project",
         `Are you sure you want to delete ${projects[index].name}`,
         [
           {
-            text: 'Cancel',
-            style: 'cancel',
+            text: "Cancel",
+            style: "cancel",
           },
           {
-            text: 'Delete',
-            style: 'destructive',
+            text: "Delete",
+            style: "destructive",
             onClick: () => {
               const updatedProjects = [...projects];
               updatedProjects.splice(index, 1);
@@ -86,9 +144,10 @@ const ProjectCard = ({ filterType, heading, key, }) => {
             },
           },
         ],
-        {cancelable: false},
-);}
-  }
+        { cancelable: false }
+      );
+    }
+  };
 
   const handleCheckBoxClick = () => {
     if (inputText.trim()) {
@@ -126,48 +185,62 @@ const ProjectCard = ({ filterType, heading, key, }) => {
   };
 
   const filteredTask = filterTasks();
+  console.log(data, "hello");
 
   return (
-    <Wrapper>
-      <HeadBox>
-        <H3>{heading}</H3>
-        <TopOption>
-        <MoreHorizOutlinedIcon onClick={()=>{setEditDeleteBox(!editDeleteBox)}}/>
-        {editDeleteBox &&<EditDeleteContainer>
-          <p onClick={projectClick("Edit")}>Edit</p>
-          <p onClick={projectClick("Delete")}>Delete</p>
-        </EditDeleteContainer>}
-        </TopOption>
-      </HeadBox>
-      <AddingSingleTask>
-        <input type="checkbox" onChange={handleCheckBoxClick} />
-        <input
-          type="text"
-          style={{ border: "none", padding: "0.5rem", width: "100%" }}
-          placeholder="write a to-do and hit enter"
-          onChange={(e) => setInputText(e.target.value)}
-          value={inputText}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              handleCheckBoxClick();
-            }
-          }}
-        />
-      </AddingSingleTask>
-      <ListWrapper>
-        {filteredTask.map((todo, index) => (
-          <SingleTask
-            key={index}
-            text={todo.task}
-            isChecked={todo.isChecked}
-            isHighlighted={todo.isHighlighted}
-            // Pass the function to handle task status change
-            setTaskStatus={() => handleTaskStatusChange(index)}
-            setTaskHighlight={()=>handleTaskHighlightChange(index)}
-          />
-        ))}
-      </ListWrapper>
-    </Wrapper>
+    <>
+      {data.map((item) => (
+        <Wrapper key={item._id}>
+          <HeadBox>
+            <H3>{item.todoName}</H3>
+            <TopOption>
+              <MoreHorizOutlinedIcon
+                onClick={() => {
+                  setEditDeleteBox(!editDeleteBox);
+                }}
+              />
+              {editDeleteBox && (
+                <EditDeleteContainer>
+                  <p onClick={projectClick("Edit")}>Edit</p>
+                  <p onClick={projectClick("Delete")}>Delete</p>
+                </EditDeleteContainer>
+              )}
+            </TopOption>
+          </HeadBox>
+          <AddingSingleTask>
+            <input type="checkbox" onChange={handleCheckBoxClick} />
+            <input
+              type="text"
+              style={{ border: "none", padding: "0.5rem", width: "100%" }}
+              placeholder="write a to-do and hit enter"
+              onChange={(e) => setInputText(e.target.value)}
+              value={inputText}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleCheckBoxClick();
+                }
+              }}
+            />
+          </AddingSingleTask>
+          <ListWrapper>
+            {item.tasks.map((task)=>(<SingleTask
+              key={task.id}
+              text={task.name}
+              isChecked={"todo.isChecked"} //prev todo->task
+              isHighlighted={"todo.isHighlighted"}
+              // Pass the function to handle task status change
+              // setTaskStatus={() => handleTaskStatusChange(index)}
+              // setTaskHighlight={() => handleTaskHighlightChange(index)}
+            />))}
+          </ListWrapper>
+        </Wrapper>
+      ))}
+    </>
+    //   <ListWrapper>
+    //     {filteredTask.map((todo, index) => (
+
+    //     ))}
+    //   </ListWrapper>
   );
 };
 

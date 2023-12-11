@@ -130,9 +130,9 @@ const Register = ({ onLoginClick }) => {
         }
       );
 
-      if (response.status === 201) {
+      if (response.ok) {
         console.log("Registration successful");
-        navigate("/login");
+        navigate("/homepage");
       } else {
         console.error("Registration failed");
       }

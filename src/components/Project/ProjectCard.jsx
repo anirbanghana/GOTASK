@@ -19,7 +19,6 @@ const Wrapper = styled(FlexBox)`
   row-gap: 1rem;
   min-width: 23rem;
   max-width: 30rem;
-
   @media (max-width: 768px) {
     width: 100%;
     min-width: 20rem;

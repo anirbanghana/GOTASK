@@ -52,7 +52,6 @@ const ProfileBox = styled(FlexBox)`
     display: none;
   }
 `;
-
 const Navbar = ({
   filterType,
   setFilterType,
@@ -62,14 +61,18 @@ const Navbar = ({
 }) => {
   const [open, setOpen] = useState(false);
   const [close, setClose] = useState(true);
-  const HamburgerClick = () => {};
 
   return (
     <Wrapper>
       <Logo>
         <img src="src\assets\GoTask.png" alt="GoTask" width="90px" />
       </Logo>
-      <SearchBox filterType={filterType} setFilterType={setFilterType} />
+      <SearchBox
+        filterType={filterType}
+        setFilterType={setFilterType}
+        searchItem={searchItem}
+        setSearchItem={setSearchItem}
+      />
 
       <ProfileBox>
         <NewProjectButton
@@ -88,20 +91,18 @@ const Navbar = ({
           onClick={() => {
             setOpen(!open);
             setClose(!close);
-            alert(open, close);
           }}
         />
       )}
-      {open && <MobileNav />}
-
       {open && (
-        <Close
+        <Cross
           onClick={() => {
             setClose(!close);
             setOpen(!open);
           }}
         />
       )}
+      {open && <MobileNav />}
     </Wrapper>
   );
 };

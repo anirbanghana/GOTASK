@@ -84,7 +84,7 @@ const Logo = styled(FlexBox)`
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 `;
 
-const Login = ({ onRegisterClick }) => {
+const Login = ({ onRegisterClick, userId, setUserId }) => {
   const [showPassword, setShowPassword] = React.useState(false);
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -95,7 +95,7 @@ const Login = ({ onRegisterClick }) => {
 
   const [formData, setFormData] = useState({
     email: "",
-    password: "",
+    password: "123",
   });
 
   const navigate = useNavigate();
@@ -108,34 +108,29 @@ const Login = ({ onRegisterClick }) => {
     }));
   };
 
-  const config = {
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
-    },
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    console.log(formData.email, formData.password);
     try {
       const response = await axios.post(
         "https://todo-backend-daem.vercel.app/login",
         {
-          email: formData.email,
-          password: formData.password,
-        },
-        config
+          email: formData?.email,
+          password: formData?.password,
+        }
       );
 
-      if (response.ok) {
+      if (response.status === 200) {
         console.log("Login successful");
         navigate("/homepage");
+        console.log(response.data.user._id);
+        setUserId(response.data.user._id);
+        console.log(userId);
       } else {
         console.error("Login failed");
       }
     } catch (error) {
-      console.error("Error during login:", error);
+      alert("Error during login:", error.message);
     }
   };
 
@@ -157,29 +152,14 @@ const Login = ({ onRegisterClick }) => {
             />
           </FormGroup>
           <FormGroup>
-            <FormControl sx={{ m: 1, width: "18rem" }} variant="outlined">
-              <InputLabel htmlFor="outlined-adornment-password">
-                Password
-              </InputLabel>
-              <OutlinedInput
-                id="outlined-adornment-password"
-                type={showPassword ? "text" : "password"}
-                endAdornment={
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      onClick={handleClickShowPassword}
-                      onMouseDown={handleMouseDownPassword}
-                      edge="end"
-                      required
-                    >
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                }
-                label="Password"
-              />
-            </FormControl>
+            <Label>Password</Label>
+            <Input2
+              type="number"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+            />
           </FormGroup>
 
           <Button type="submit">Login</Button>
@@ -200,4 +180,3 @@ const Login = ({ onRegisterClick }) => {
 };
 
 export default Login;
-//commit

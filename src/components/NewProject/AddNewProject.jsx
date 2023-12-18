@@ -3,6 +3,7 @@ import styled from "styled-components";
 import FlexBox from "../../common/ui/FlexBox";
 import { IoIosClose } from "react-icons/io";
 import axios from "axios";
+import { useEffect } from "react";
 const Wrapper = styled(FlexBox)`
   width: 100%;
   height: 100%;
@@ -64,13 +65,15 @@ const Close = styled(IoIosClose)`
 
 //main function and components
 
-const AddNewProject = ({ close, projects, setProjects }) => {
+const AddNewProject = ({ close, projects, setProjects, userId }) => {
   const [formData, setFormData] = useState("");
 
   const handleChange = (e) => {
     setFormData(e.target.value);
   };
-
+  useEffect(() => {
+    console.log(userId, "this is in  button app");
+  }, []);
   const AdditionProject = async () => {
     try {
       if (formData.trim() === "") {
@@ -80,24 +83,29 @@ const AddNewProject = ({ close, projects, setProjects }) => {
       const response = await axios.post(
         "https://todo-backend-daem.vercel.app/post-todo",
         {
+          userId: userId,
           todoName: formData,
-          // userId: "6576aaae6c2e044a510b424e",
         }
       );
-      console.log(response.status, "gg");
-      if (response.ok) {
-        // Update the state with the new project
-        console.log("pushed");
-        setProjects([...projects, response.data]);
-        setFormData("");
-        close();
-      } else {
-        console.error("Error adding project:", response.data);
-        alert("Failed to add project. Please try again.");
-      }
+      // console.log(response.status, "gg");
+
+      // Update the state with the new project
+      console.log(response.data.todo);
+      setProjects([...projects, response.data.todo]);
+      console.log(projects, "this is projects");
+      // setProjects([...projects, response.data.todo]);
+      setFormData("");
+      close();
+      // console.log("pushed");
+      // setProjects([...projects, response.data.todo]);
+      // setFormData("");
+      // close();
+
+      // console.log(response.data.todo);
+      // alert("Failed to add project. Please try again.");
     } catch (error) {
-      console.error("Error adding project:", error);
-      alert("Failed . Please try again.");
+      console.log("Error adding project:", error);
+      // alert("Failed . Please try again.");
     }
   };
 

@@ -5,6 +5,10 @@ import FlexBox from "../../common/ui/FlexBox";
 import SingleTask from "./SingleTask";
 import { H3 } from "../../common/ui/Headings";
 import axios from "axios";
+import ClickAblesOpt from "../options/ClickAblesOpt";
+import { useRef } from "react";
+import Edit from "../NewProject/Edit";
+import Modal from "../../common/ui/Modal";
 
 const Wrapper = styled(FlexBox)`
   flex-direction: column;
@@ -15,19 +19,28 @@ const Wrapper = styled(FlexBox)`
   row-gap: 1rem;
   min-width: 23rem;
   max-width: 30rem;
-  
+
   @media (max-width: 768px) {
     width: 100%;
     min-width: 20rem;
   }
 `;
-
+const OptionBox = styled(FlexBox)`
+  position: absolute;
+  top: 20%;
+  right: 1.875rem;
+  width: 6rem;
+  // padding: 1rem;
+  z-index: 1;
+  cursor: pointer;
+  /* Add styling for the OptionBox component */
+`;
 const ListWrapper = styled(FlexBox)`
   flex-direction: column;
   row-gap: 0.5rem;
   overflow-y: auto;
+  padding-bottom: 1rem;
   max-height: 20rem;
-  padding-bottom:1rem;
 `;
 
 const HeadBox = styled(FlexBox)`
@@ -63,184 +76,246 @@ const EditDeleteContainer = styled(FlexBox)`
   right: 30%;
 `;
 
-const dummydata = [
-  {
-    projectName: "work",
-    id: 1,
-    tasks: [
-      {
-        id: "a1",
-        taskname: "buy apple",
-      },
-      {
-        id: "a2",
-        taskname: "buy banan",
-      },
-      {
-        id: "a3",
-        taskname: "buy cat",
-      },
-    ],
-  },
-  {
-    projectName: "personal",
-    id: 2,
-    tasks: [
-      {
-        id: "a1",
-        taskname: "eat apple",
-      },
-      {
-        id: "a2",
-        taskname: "eat banan",
-      },
-      {
-        id: "a3",
-        taskname: " cat farming",
-      },
-    ],
-  },
-];
-
-const ProjectCard = ({ filterType, heading, key,data }) => {
-  const [tasks, setTasks] = useState([{ task: "appleee", isChecked: "0" }]);
+const ProjectCard = ({
+  filterType,
+  heading,
+  key,
+  userId,
+  projects,
+  setProjects,
+}) => {
   const [inputText, setInputText] = useState("");
   const [editDeleteBox, setEditDeleteBox] = useState(false);
-  // const [data, setData] = useState([]);
+  const optionRef = useRef(null);
+  const [openedDotIndex, setOpenedDotIndex] = useState(null);
+  const data = ["Edit", "Delete"];
+  const [modalOpen, setmodalOpen] = useState(false);
+  const [editId, setEditId] = useState(null);
+  const [selectedProject, setSelectedProject] = useState("");
+  const [inputTexts, setInputTexts] = useState({});
 
-  // useEffect(() => {
-  //   axios
-  //     .get(
-  //       "https://todo-backend-daem.vercel.app/get-all-todos/6576aaae6c2e044a510b424e"
-  //     )
-  //     .then((response) => {
-  //       setData(response.data.todo);
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error fetching data:", error);
-  //     });
-  // }, []);
+  const projectClick = (id, filter) => {
+    const project = projects.filter((project) => project._id === id);
+    if (filter === "Edit") {
+      setEditId(id);
+      const newProject = projects.filter((project) => project._id === id);
+      setSelectedProject(newProject[0].todoName);
+      openModal();
+      handleUpdateProject(id);
+    } else if (filter === "Delete") {
+      // alert(
+      //   "Delete Project",
+      //   `Are you sure you want to delete ${project.todoName}`,
+      //   [
+      //     {
+      //       text: "Cancel",
+      //       style: "cancel",
+      //     },
+      //     {
+      //       text: "Delete",
+      //       style: "destructive",
+      //       onClick: () => {
+      //         console.log("delete is clicked");
+      //         handleDeleteProject(id);
+      //       },
+      //     },
+      //   ],
+      //   { cancelable: false }
+      // );
+      setEditId(id);
+      handleDeleteProject(id);
+    }
+    setEditDeleteBox(false);
+  };
 
-  const projectClick = () => {
-    if (filterType === "Edit") {
-      setModalVisible(true);
-      setSelectedProject(projects[index].name);
-    } else if (filterType === "Delete") {
-      alert(
-        "Delete Project",
-        `Are you sure you want to delete ${projects[index].name}`,
-        [
-          {
-            text: "Cancel",
-            style: "cancel",
+  const handleDeleteProject = async (id) => {
+    const newProject = projects.filter((project) => project._id === id);
+    const userId = newProject[0].userId;
+    console.log(id, userId, newProject);
+
+    try {
+      const response = await axios.delete(
+        `https://todo-backend-daem.vercel.app/delete-todo`,
+        {
+          data: {
+            userId: userId,
+            todoId: id,
           },
-          {
-            text: "Delete",
-            style: "destructive",
-            onClick: () => {
-              const updatedProjects = [...projects];
-              updatedProjects.splice(index, 1);
-              setProjects(updatedProjects);
-            },
-          },
-        ],
-        { cancelable: false }
+        }
       );
+      console.log(response);
+      const updatedProjects = projects.filter((project) => project._id !== id);
+
+      setProjects(updatedProjects);
+    } catch (error) {
+      console.log("error in deleting", error);
     }
   };
+  const handleInputChange = (projectId, value) => {
+    setInputTexts({
+      ...inputTexts,
+      [projectId]: value,
+    });
+  };
+  const handleCheckBoxClick = async (projectId) => {
+    const newProject = projects.find((project) => project._id === projectId);
+    if (inputTexts[projectId]?.trim()) {
+      try {
+        const response = await axios.post(
+          "https://todo-backend-daem.vercel.app/post-task-by-todo",
+          {
+            userId: newProject.userId,
+            todoId: projectId,
+            name: inputTexts[projectId],
+          }
+        );
+        const updatedProjects = projects.map((project) => {
+          if (project._id === projectId) {
+            return {
+              ...project,
+              tasks: [...project.tasks, response.data.task],
+            };
+          }
+          return project;
+        });
 
-  const handleCheckBoxClick = () => {
-    if (inputText.trim()) {
-      const newTask = {
-        task: inputText,
-        isChecked: false,
-      };
-      setTasks([...tasks, newTask]);
-      setInputText(""); // Clear input field after adding task
+        setProjects(updatedProjects);
+        setInputTexts({
+          ...inputTexts,
+          [projectId]: "", // Clear the input text after adding the task
+        });
+      } catch (error) {
+        console.log("Error in adding task", error.message);
+      }
     }
   };
-
-  const handleTaskStatusChange = (index) => {
-    const updatedTasks = [...tasks];
-    updatedTasks[index].isChecked = !updatedTasks[index].isChecked;
-    setTasks(updatedTasks);
-  };
-
-  const handleTaskHighlightChange = (index) => {
-    const updatedTasks2 = [...tasks];
-    updatedTasks2[index].isHighlighted = !updatedTasks2[index].isHighlighted;
-    setTasks(updatedTasks2);
-  };
-
-  // Filter tasks based on filterType
-  const filterTasks = () => {
-    if (filterType === "All") {
-      return tasks;
-    } else if (filterType === "Complete") {
-      return tasks.filter((task) => task.isChecked);
-    } else if (filterType === "Outstanding") {
-      return tasks.filter((task) => task.isHighlighted);
+  const handleDotOpen = (index) => {
+    if (openedDotIndex === index) {
+      setOpenedDotIndex(null);
+      setEditDeleteBox(false);
+    } else {
+      setOpenedDotIndex(index);
+      setEditDeleteBox(true);
     }
-    return tasks;
+  };
+  const handleTaskStatusChange = (itemId, heading) => {
+    const updatedProjects = projects?.map((project) => {
+      if (project.todoName === heading) {
+        const updatedTasks = project.tasks.map((task) => {
+          if (task._id === itemId) {
+            return { ...task, isChecked: !task.isChecked };
+          }
+          return task;
+        });
+        return { ...project, tasks: updatedTasks };
+      }
+      return project;
+    });
+    setProjects(updatedProjects);
+  };
+  const openModal = () => {
+    setmodalOpen(true);
   };
 
-  const filteredTask = filterTasks();
-  console.log(data, "hello");
+  const closeModal = () => {
+    setmodalOpen(false);
+  };
+
+  const handleTaskHighlightChange = (itemId, heading) => {
+    console.log(itemid, heading);
+    const updatedProjects = projects?.map((project) => {
+      if (project.todoName === heading) {
+        const updatedTasks = project.tasks.map((task) => {
+          if (task._id === itemId) {
+            return { ...task, ishighlight: !task.ishighlight };
+          }
+          return task;
+        });
+        return { ...project, tasks: updatedTasks };
+      }
+      return project;
+    });
+  };
 
   return (
     <>
-      {data.map((item) => (
+      {projects?.map((item) => (
         <Wrapper key={item._id}>
           <HeadBox>
             <H3>{item.todoName}</H3>
             <TopOption>
               <MoreHorizOutlinedIcon
                 onClick={() => {
-                  setEditDeleteBox(!editDeleteBox);
+                  handleDotOpen(item._id);
                 }}
               />
-              {editDeleteBox && (
-                <EditDeleteContainer>
-                  <p onClick={projectClick("Edit")}>Edit</p>
-                  <p onClick={projectClick("Delete")}>Delete</p>
-                </EditDeleteContainer>
+
+              {openedDotIndex === item._id && editDeleteBox && (
+                <OptionBox ref={optionRef}>
+                  <ClickAblesOpt
+                    data={data}
+                    projectClick={(filter) => projectClick(item._id, filter)}
+                  />
+                </OptionBox>
               )}
             </TopOption>
           </HeadBox>
+          {modalOpen && (
+            <Modal
+              M1
+              children={
+                <Edit
+                  userId={userId}
+                  close={closeModal}
+                  projects={projects}
+                  setProjects={setProjects}
+                  selectedProject={selectedProject}
+                  todoId={editId}
+                  setmodalOpen={setmodalOpen}
+                />
+              }
+              togglePopup={modalOpen}
+              justifyContent="center"
+            />
+          )}
           <AddingSingleTask>
-            <input type="checkbox" onChange={handleCheckBoxClick} />
+            <input type="checkbox" onChange={handleCheckBoxClick(item._id)} />
             <input
               type="text"
               style={{ border: "none", padding: "0.5rem", width: "100%" }}
               placeholder="write a to-do and hit enter"
-              onChange={(e) => setInputText(e.target.value)}
-              value={inputText}
+              onChange={(e) => handleInputChange(item._id, e.target.value)}
+              value={inputTexts[item._id] || ""}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
-                  handleCheckBoxClick();
+                  e.preventDefault(); // Prevent default form submission behavior
+                  handleCheckBoxClick(item._id);
                 }
               }}
             />
           </AddingSingleTask>
           <ListWrapper>
-            {item.tasks.map((task)=>(<SingleTask
-              key={task.id}
-              text={task.name}
-              isChecked={"todo.isChecked"} //prev todo->task
-              isHighlighted={"todo.isHighlighted"}
-              // Pass the function to handle task status change
-              // setTaskStatus={() => handleTaskStatusChange(index)}
-              // setTaskHighlight={() => handleTaskHighlightChange(index)}
-            />))}
+            {item.tasks.map((task, index) => (
+              <SingleTask
+                key={task._id}
+                text={task.name}
+                isChecked={task.isChecked}
+                isHighlighted={task.isHighlighted}
+                setTaskStatus={() =>
+                  handleTaskStatusChange(task._id, item.todoName)
+                }
+                setTaskHighlight={() =>
+                  handleTaskHighlightChange(task._id, item.todoName)
+                }
+                heading={item.todoName}
+                projects={projects}
+                setProjects={setProjects}
+              />
+            ))}
           </ListWrapper>
         </Wrapper>
       ))}
     </>
-    //   <ListWrapper>
-    //     {filteredTask.map((todo, index) => (
-
-    //     ))}
-    //   </ListWrapper>
   );
 };
 

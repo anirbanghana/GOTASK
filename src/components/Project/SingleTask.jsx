@@ -30,16 +30,46 @@ const CRUDbox = styled(FlexBox)`
 const OptionBox = styled(FlexBox)`
   position: absolute;
   top: 70%;
-  left: 50%;
+  left: 50%; const handleDeleteProject = async (id) => {
+    const project = projects.filter((project) => project._id === id);
+    try {
+      const response = await axios.delete(
+        "https://todo-backend-daem.vercel.app/delete-todo",
+        {
+          userId: project.userId,
+          todoId: id,
+        }
+      );
+      console.log(response.data);
+      const updatedProjects = projects.filter((project) => project._id != id);
+      setProjects(updatedProjects);
+    } catch (error) {
+      console.log("error in deleting", error);
+    }
+  };
+
   z-index: 1;
   cursor: pointer;
   /* Add styling for the OptionBox component */
 `;
-
-const SingleTask = ({ text, isChecked, setTaskStatus ,setTaskHighlight}) => {
+const TaskBox = styled(FlexBox)`
+  background-color: white;
+  border: 1px solid black;
+`;
+const SingleTask = ({
+  projects,
+  setProjects,
+  text,
+  isChecked,
+  setTaskStatus,
+  setTaskHighlight,
+  heading,
+}) => {
   const [isHighlighted, setHighlighted] = useState(false);
   const [optionOpen, setOptionOpen] = useState(false);
   const optionRef = useRef(null);
+
+  const data = ["Move to Tomorrow", "Highlights", "Edit", "Delete"];
 
   const handleCheckboxChange = () => {
     setTaskStatus(); // Update the task's isChecked status
@@ -57,11 +87,17 @@ const SingleTask = ({ text, isChecked, setTaskStatus ,setTaskHighlight}) => {
 
   const handleDocumentClick = (e) => {
     // Close the OptionBox if the click is outside the OptionBox
-    if (optionOpen && optionRef.current && !optionRef.current.contains(e.target)) {
+    if (
+      optionOpen &&
+      optionRef.current &&
+      !optionRef.current.contains(e.target)
+    ) {
       setOptionOpen(false);
     }
   };
-
+  const filteredTasks = projects.filter(
+    (project) => project.todoName === heading
+  );
   useEffect(() => {
     document.addEventListener("mousedown", handleDocumentClick);
 
@@ -69,7 +105,7 @@ const SingleTask = ({ text, isChecked, setTaskStatus ,setTaskHighlight}) => {
       document.removeEventListener("mousedown", handleDocumentClick);
     };
   }, [optionOpen]);
-
+  // console.log(filteredTasks[0]?.tasks, heading, "single card");
   return (
     <Wrapper isHighlighted={isHighlighted}>
       <InputBox style={{ textDecoration: isChecked ? "line-through" : "none" }}>
@@ -84,7 +120,10 @@ const SingleTask = ({ text, isChecked, setTaskStatus ,setTaskHighlight}) => {
         <MoreHorizOutlinedIcon onClick={handleOptionIconClick} />
         {optionOpen && (
           <OptionBox ref={optionRef}>
-            <ClickAblesOpt onHighlightClick={handleHighlightClick} />
+            <ClickAblesOpt
+              onHighlightClick={handleHighlightClick}
+              data={data}
+            />
           </OptionBox>
         )}
       </CRUDbox>

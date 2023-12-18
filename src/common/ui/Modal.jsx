@@ -34,10 +34,10 @@ const Content = styled.div`
   overflow: hidden;
   animation: fade-in 0.3s ease-in-out;
   align-items: center;
-  align-self:center;
+  align-self: center;
   justify-content: center;
-  border-radius:1rem;
-  overflow-y:auto;
+  border-radius: 1rem;
+  overflow-y: auto;
 
   @keyframes fade-in {
     from {

@@ -119,13 +119,13 @@ const Register = ({ onLoginClick }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    console.log(formData?.email, formData?.fullname, formData?.password);
     try {
       const response = await axios.post(
         "https://todo-backend-daem.vercel.app/register",
         {
           email: formData.email,
-          fullname: formData.fullname,
+          username: formData.fullname,
           password: formData.password,
         }
       );
@@ -134,7 +134,8 @@ const Register = ({ onLoginClick }) => {
         console.log("Registration successful");
         navigate("/homepage");
       } else {
-        console.error("Registration failed");
+        console.error("Registration failed", response.data.message);
+        navigate("/homepage");
       }
     } catch (error) {
       console.error("Error during registration:", error);
@@ -170,22 +171,13 @@ const Register = ({ onLoginClick }) => {
           </FormGroup>
           <FormGroup>
             <Label>Password</Label>
-            <InputWrapper>
-              <Input
-                type={formData.showPassword ? "text" : "password"}
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                required
-              />
-              <ToggleIcon onClick={togglePasswordVisibility}>
-                {formData.showPassword ? (
-                  <BsEyeSlash size="1.5rem" />
-                ) : (
-                  <BsEye size="1.5rem" />
-                )}
-              </ToggleIcon>
-            </InputWrapper>
+            <Input
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+            />
           </FormGroup>
           <Button type="submit">Register</Button>
         </Form>

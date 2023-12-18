@@ -19,8 +19,6 @@ const FlexScroll = styled(FlexBox)`
   overflow-x: auto;
   scrollbar-width: none;
   -ms-overflow-style: none;
-  
-
 
   &::-webkit-scrollbar {
     display: none;
@@ -79,11 +77,11 @@ const dummydata = [
   },
 ];
 
-const ViewGrid = ({ projects, filterType }) => {
+const ViewGrid = ({ projects, setProjects, filterType, heading, userId }) => {
   const [data, setData] = useState([]);
 
   const url = "https://todo-backend-daem.vercel.app/get-all-todos";
-  const userId = "6576aaae6c2e044a510b424e";
+  // const userId = "6576aaae6c2e044a510b424e";
 
   useEffect(() => {
     axios
@@ -97,28 +95,20 @@ const ViewGrid = ({ projects, filterType }) => {
         console.error("Error fetching data:", error);
       });
   }, []);
-
-  console.log("viewgrid", data);
+  useEffect(() => {
+    console.log("viewgrid", projects);
+  }, []);
 
   return (
     <Wrapper column>
-      {/* <FlexBox column rowGap="1rem">
-        <ChipToday isToday="1" />
-        <FlexScroll>
-          {data.length > 0 &&
-            dummydata.map((item, index) => (
-              <ProjectCard />
-            ))}
-        </FlexScroll>
-      </FlexBox> */}
-
       <FlexBox column rowGap="1rem">
         <ChipToday isToday="1" />
         <FlexScroll>
           <ProjectCard
             filterType={filterType}
             projects={projects}
-            data={data}
+            userId={userId}
+            setProjects={setProjects}
           />
         </FlexScroll>
       </FlexBox>
@@ -132,9 +122,10 @@ const ViewGrid = ({ projects, filterType }) => {
         </SectionWithChipAndHr>
         <FlexScroll>
           <ProjectCard
+            userId={userId}
             filterType={filterType}
             projects={projects}
-            data={data}
+            setProjects={setProjects}
           />
         </FlexScroll>
       </FlexBox>

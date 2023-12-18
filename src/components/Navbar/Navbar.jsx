@@ -9,6 +9,7 @@ import { useState } from "react";
 import MobileNav from "./MobileNav";
 import NewProjectButton from "./NewProjectButton";
 import ProfileComponent from "./ProfileComponent";
+import { useEffect } from "react";
 
 const Wrapper = styled(FlexBox)`
   background: white;
@@ -52,7 +53,13 @@ const ProfileBox = styled(FlexBox)`
   }
 `;
 
-const Navbar = ({ filterType, setFilterType, projects, setProjects }) => {
+const Navbar = ({
+  filterType,
+  setFilterType,
+  projects,
+  setProjects,
+  userId,
+}) => {
   const [open, setOpen] = useState(false);
   const [close, setClose] = useState(true);
   const HamburgerClick = () => {};
@@ -65,11 +72,15 @@ const Navbar = ({ filterType, setFilterType, projects, setProjects }) => {
       <SearchBox filterType={filterType} setFilterType={setFilterType} />
 
       <ProfileBox>
-        <NewProjectButton projects={projects} setProjects={setProjects} />
+        <NewProjectButton
+          projects={projects}
+          setProjects={setProjects}
+          userId={userId}
+        />
       </ProfileBox>
 
       <ProfileBox>
-        <ProfileComponent/>
+        <ProfileComponent />
       </ProfileBox>
 
       {close && (

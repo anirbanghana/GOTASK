@@ -3,8 +3,9 @@ import React, { useState } from "react";
 import FlexBox from "../../common/ui/FlexBox";
 import AddNewProject from "../NewProject/AddNewProject";
 import Modal from "../../common/ui/Modal";
+import { useEffect } from "react";
 
-const NewProjectButton = ({ projects, setProjects }) => {
+const NewProjectButton = ({ projects, setProjects, userId }) => {
   const [modalOpen, setmodalOpen] = useState(false);
 
   const openModal = () => {
@@ -23,18 +24,14 @@ const NewProjectButton = ({ projects, setProjects }) => {
         </Button>
       </FlexBox>
       {modalOpen && (
-        <Modal
-          M1
-          children={
-            <AddNewProject
-              close={closeModal}
-              projects={projects}
-              setProjects={setProjects}
-            />
-          }
-          togglePopup={modalOpen}
-          justifyContent="center"
-        />
+        <Modal M1 togglePopup={modalOpen} justifyContent="center">
+          <AddNewProject
+            close={closeModal}
+            userId={userId}
+            projects={projects}
+            setProjects={setProjects}
+          />
+        </Modal>
       )}
     </>
   );

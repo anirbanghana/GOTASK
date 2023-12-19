@@ -348,7 +348,7 @@ const ProjectCard = ({
                   key={task._id}
                   text={task.name}
                   isChecked={task.isChecked}
-                  isHighlighted={task.isHighlighted}
+                  isHighlighted={task.ishighlight}
                   setTaskStatus={() =>
                     handleTaskStatusChange(task._id, item.todoName)
                   }

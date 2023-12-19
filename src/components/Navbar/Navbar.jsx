@@ -95,7 +95,7 @@ const Navbar = ({
         />
       )}
       {open && (
-        <Cross
+        <Close
           onClick={() => {
             setClose(!close);
             setOpen(!open);

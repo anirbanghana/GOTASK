@@ -91,6 +91,7 @@ const AddNewProject = ({ close, projects, setProjects, userId }) => {
 
       // Update the state with the new project
       console.log(response.data.todo);
+
       setProjects([...projects, response.data.todo]);
       console.log(projects, "this is projects");
       // setProjects([...projects, response.data.todo]);

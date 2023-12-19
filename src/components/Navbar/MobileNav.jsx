@@ -4,7 +4,7 @@ import FlexBox from "../../common/ui/FlexBox";
 import NewProjectButton from "./NewProjectButton";
 import ProfileComponent from "./ProfileComponent";
 const Wrapper = styled(FlexBox)`
-  width: 90%;
+  width: 100%;
   height: 100%;
   background-color: red;
   z-index: 2;

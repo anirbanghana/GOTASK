@@ -82,7 +82,7 @@ const ViewGrid = ({ projects, setProjects, filterType, heading, userId }) => {
 
   const url = "https://todo-backend-daem.vercel.app/get-all-todos";
   // const userId = "6576aaae6c2e044a510b424e";
-
+  console.log(filterType, "Inside the grid view");
   useEffect(() => {
     axios
       .get(

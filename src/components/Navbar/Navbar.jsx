@@ -70,8 +70,8 @@ const Navbar = ({
       <SearchBox
         filterType={filterType}
         setFilterType={setFilterType}
-        searchItem={searchItem}
-        setSearchItem={setSearchItem}
+        // searchItem={searchItem}
+        // setSearchItem={setSearchItem}
       />
 
       <ProfileBox>

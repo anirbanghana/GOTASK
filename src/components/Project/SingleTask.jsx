@@ -30,23 +30,7 @@ const CRUDbox = styled(FlexBox)`
 const OptionBox = styled(FlexBox)`
   position: absolute;
   top: 70%;
-  left: 50%; const handleDeleteProject = async (id) => {
-    const project = projects.filter((project) => project._id === id);
-    try {
-      const response = await axios.delete(
-        "https://todo-backend-daem.vercel.app/delete-todo",
-        {
-          userId: project.userId,
-          todoId: id,
-        }
-      );
-      console.log(response.data);
-      const updatedProjects = projects.filter((project) => project._id != id);
-      setProjects(updatedProjects);
-    } catch (error) {
-      console.log("error in deleting", error);
-    }
-  };
+  left: 50%;
 
   z-index: 1;
   cursor: pointer;
@@ -78,11 +62,16 @@ const SingleTask = ({
   const handleOptionIconClick = () => {
     setOptionOpen(!optionOpen);
   };
-
+  const projectClick = (filterType) => {
+    if (filterType === "Highlights") {
+      console.log("highlight is clicked");
+      setTaskHighlight();
+      setHighlighted(!isHighlighted);
+      setOptionOpen(false);
+    }
+  };
   const handleHighlightClick = () => {
-    setTaskHighlight();
-    setHighlighted(!isHighlighted);
-    setOptionOpen(false); // Close the options after clicking "Highlight"
+    // Close the options after clicking "Highlight"
   };
 
   const handleDocumentClick = (e) => {
@@ -123,6 +112,7 @@ const SingleTask = ({
             <ClickAblesOpt
               onHighlightClick={handleHighlightClick}
               data={data}
+              projectClick={(filter) => projectClick(filter)}
             />
           </OptionBox>
         )}

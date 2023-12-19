@@ -9,6 +9,7 @@ import ClickAblesOpt from "../options/ClickAblesOpt";
 import { useRef } from "react";
 import Edit from "../NewProject/Edit";
 import Modal from "../../common/ui/Modal";
+import { LocalConvenienceStoreOutlined } from "@mui/icons-material";
 
 const Wrapper = styled(FlexBox)`
   flex-direction: column;
@@ -92,6 +93,8 @@ const ProjectCard = ({
   const [editId, setEditId] = useState(null);
   const [selectedProject, setSelectedProject] = useState("");
   const [inputTexts, setInputTexts] = useState({});
+  const [showCompletedTasks, setShowCompletedTasks] = useState(false);
+  const [showHighlightedTasks, setShowHighlightedTasks] = useState(false);
 
   const projectClick = (id, filter) => {
     const project = projects.filter((project) => project._id === id);
@@ -142,6 +145,7 @@ const ProjectCard = ({
           },
         }
       );
+
       console.log(response);
       const updatedProjects = projects.filter((project) => project._id !== id);
 
@@ -188,6 +192,7 @@ const ProjectCard = ({
       }
     }
   };
+
   const handleDotOpen = (index) => {
     if (openedDotIndex === index) {
       setOpenedDotIndex(null);
@@ -221,7 +226,6 @@ const ProjectCard = ({
   };
 
   const handleTaskHighlightChange = (itemId, heading) => {
-    console.log(itemid, heading);
     const updatedProjects = projects?.map((project) => {
       if (project.todoName === heading) {
         const updatedTasks = project.tasks.map((task) => {
@@ -234,8 +238,10 @@ const ProjectCard = ({
       }
       return project;
     });
+    setProjects(updatedProjects);
+    console.log(projects);
   };
-
+  // console.log(projects, "inside the project card");
   return (
     <>
       {projects?.map((item) => (
@@ -278,7 +284,12 @@ const ProjectCard = ({
             />
           )}
           <AddingSingleTask>
-            <input type="checkbox" onChange={handleCheckBoxClick(item._id)} />
+            <input
+              type="checkbox"
+              onChange={() =>
+                handleCheckBoxClick(item._id, inputTexts[item._id] || "")
+              }
+            />
             <input
               type="text"
               style={{ border: "none", padding: "0.5rem", width: "100%" }}
@@ -293,7 +304,7 @@ const ProjectCard = ({
               }}
             />
           </AddingSingleTask>
-          <ListWrapper>
+          {/* <ListWrapper>
             {item.tasks.map((task, index) => (
               <SingleTask
                 key={task._id}
@@ -303,14 +314,52 @@ const ProjectCard = ({
                 setTaskStatus={() =>
                   handleTaskStatusChange(task._id, item.todoName)
                 }
-                setTaskHighlight={() =>
-                  handleTaskHighlightChange(task._id, item.todoName)
-                }
+                setTaskHighlight={() => {
+                  console.log("highlight is called");
+                  handleTaskHighlightChange(task._id, item.todoName);
+                }}
                 heading={item.todoName}
                 projects={projects}
                 setProjects={setProjects}
               />
             ))}
+          </ListWrapper> */}
+          {/* { if (filterType === 'Completed') {
+              setShowCompletedTasks(true);
+              setShowHighlightedTasks(false);
+            } else if (filterType === 'Outstanding') {
+              setShowCompletedTasks(false);
+              setShowHighlightedTasks(true);
+            }
+          } */}
+
+          <ListWrapper>
+            {item.tasks
+              .filter((task) => {
+                if (filterType === "Complete") {
+                  return task.isChecked;
+                } else if (filterType === "Outstanding") {
+                  return task.ishighlight;
+                }
+                return true; // Show all tasks by default
+              })
+              .map((task, index) => (
+                <SingleTask
+                  key={task._id}
+                  text={task.name}
+                  isChecked={task.isChecked}
+                  isHighlighted={task.isHighlighted}
+                  setTaskStatus={() =>
+                    handleTaskStatusChange(task._id, item.todoName)
+                  }
+                  setTaskHighlight={() =>
+                    handleTaskHighlightChange(task._id, item.todoName)
+                  }
+                  heading={item.todoName}
+                  projects={projects}
+                  setProjects={setProjects}
+                />
+              ))}
           </ListWrapper>
         </Wrapper>
       ))}

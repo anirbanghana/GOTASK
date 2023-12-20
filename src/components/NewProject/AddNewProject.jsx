@@ -63,8 +63,6 @@ const Close = styled(IoIosClose)`
   cursor: pointer;
 `;
 
-//main function and components
-
 const AddNewProject = ({ close, projects, setProjects, userId }) => {
   const [formData, setFormData] = useState("");
 
@@ -87,26 +85,14 @@ const AddNewProject = ({ close, projects, setProjects, userId }) => {
           todoName: formData,
         }
       );
-      // console.log(response.status, "gg");
-
-      // Update the state with the new project
       console.log(response.data.todo);
 
       setProjects([...projects, response.data.todo]);
       console.log(projects, "this is projects");
-      // setProjects([...projects, response.data.todo]);
       setFormData("");
       close();
-      // console.log("pushed");
-      // setProjects([...projects, response.data.todo]);
-      // setFormData("");
-      // close();
-
-      // console.log(response.data.todo);
-      // alert("Failed to add project. Please try again.");
     } catch (error) {
       console.log("Error adding project:", error);
-      // alert("Failed . Please try again.");
     }
   };
 

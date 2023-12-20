@@ -84,7 +84,6 @@ const ProjectCard = ({
   projects,
   setProjects,
 }) => {
-  const [inputText, setInputText] = useState("");
   const [editDeleteBox, setEditDeleteBox] = useState(false);
   const optionRef = useRef(null);
   const [openedDotIndex, setOpenedDotIndex] = useState(null);
@@ -93,8 +92,7 @@ const ProjectCard = ({
   const [editId, setEditId] = useState(null);
   const [selectedProject, setSelectedProject] = useState("");
   const [inputTexts, setInputTexts] = useState({});
-  const [showCompletedTasks, setShowCompletedTasks] = useState(false);
-  const [showHighlightedTasks, setShowHighlightedTasks] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
 
   const projectClick = (id, filter) => {
     const project = projects.filter((project) => project._id === id);
@@ -105,25 +103,6 @@ const ProjectCard = ({
       openModal();
       handleUpdateProject(id);
     } else if (filter === "Delete") {
-      // alert(
-      //   "Delete Project",
-      //   `Are you sure you want to delete ${project.todoName}`,
-      //   [
-      //     {
-      //       text: "Cancel",
-      //       style: "cancel",
-      //     },
-      //     {
-      //       text: "Delete",
-      //       style: "destructive",
-      //       onClick: () => {
-      //         console.log("delete is clicked");
-      //         handleDeleteProject(id);
-      //       },
-      //     },
-      //   ],
-      //   { cancelable: false }
-      // );
       setEditId(id);
       handleDeleteProject(id);
     }
@@ -160,6 +139,58 @@ const ProjectCard = ({
       [projectId]: value,
     });
   };
+
+  const handleUpdateTask = async (id, projectId, editText) => {
+    setEditId(id);
+    try {
+      const response = await axios.patch(
+        `https://todo-backend-daem.vercel.app/update-task-by-todo/${id}`,
+        {
+          name: editText,
+        }
+      );
+
+      const updatedTasks = projects.map((project) => {
+        if (project.todoName === projectId) {
+          const updatedTaskList = project.tasks.map((task) => {
+            if (task._id === id) {
+              return { ...task, name: editText };
+            }
+            return task;
+          });
+          return { ...project, tasks: updatedTaskList };
+        }
+        return project;
+      });
+
+      setProjects(updatedTasks);
+      console.log(response.data);
+    } catch (error) {
+      console.log("Error in updating task", error);
+    }
+  };
+
+  const handleDeleteTask = async (id, projectId) => {
+    try {
+      await axios.delete(
+        `https://todo-backend-daem.vercel.app/delete-task-by-todo/${id}`
+      );
+      const updatedProjects = projects.map((project) => {
+        if (project.todoName === projectId) {
+          const updatedTasks = project.tasks.filter((task) => task._id !== id);
+          return {
+            ...project,
+            tasks: updatedTasks,
+          };
+        }
+        return project;
+      });
+
+      setProjects(updatedProjects);
+    } catch (error) {
+      console.log("error in deleting ", error.message);
+    }
+  };
   const handleCheckBoxClick = async (projectId) => {
     const newProject = projects.find((project) => project._id === projectId);
     if (inputTexts[projectId]?.trim()) {
@@ -185,7 +216,7 @@ const ProjectCard = ({
         setProjects(updatedProjects);
         setInputTexts({
           ...inputTexts,
-          [projectId]: "", // Clear the input text after adding the task
+          [projectId]: "",
         });
       } catch (error) {
         console.log("Error in adding task", error.message);
@@ -241,7 +272,6 @@ const ProjectCard = ({
     setProjects(updatedProjects);
     console.log(projects);
   };
-  // console.log(projects, "inside the project card");
   return (
     <>
       {projects?.map((item) => (
@@ -298,40 +328,12 @@ const ProjectCard = ({
               value={inputTexts[item._id] || ""}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
-                  e.preventDefault(); // Prevent default form submission behavior
+                  e.preventDefault();
                   handleCheckBoxClick(item._id);
                 }
               }}
             />
           </AddingSingleTask>
-          {/* <ListWrapper>
-            {item.tasks.map((task, index) => (
-              <SingleTask
-                key={task._id}
-                text={task.name}
-                isChecked={task.isChecked}
-                isHighlighted={task.isHighlighted}
-                setTaskStatus={() =>
-                  handleTaskStatusChange(task._id, item.todoName)
-                }
-                setTaskHighlight={() => {
-                  console.log("highlight is called");
-                  handleTaskHighlightChange(task._id, item.todoName);
-                }}
-                heading={item.todoName}
-                projects={projects}
-                setProjects={setProjects}
-              />
-            ))}
-          </ListWrapper> */}
-          {/* { if (filterType === 'Completed') {
-              setShowCompletedTasks(true);
-              setShowHighlightedTasks(false);
-            } else if (filterType === 'Outstanding') {
-              setShowCompletedTasks(false);
-              setShowHighlightedTasks(true);
-            }
-          } */}
 
           <ListWrapper>
             {item.tasks
@@ -346,15 +348,24 @@ const ProjectCard = ({
               .map((task, index) => (
                 <SingleTask
                   key={task._id}
+                  index={task._id}
                   text={task.name}
+                  setEditId={setEditId}
+                  editId={editId}
                   isChecked={task.isChecked}
                   isHighlighted={task.ishighlight}
+                  isEditing={isEditing}
+                  setIsEditing={setIsEditing}
                   setTaskStatus={() =>
                     handleTaskStatusChange(task._id, item.todoName)
                   }
                   setTaskHighlight={() =>
                     handleTaskHighlightChange(task._id, item.todoName)
                   }
+                  EditTask={(editText) => {
+                    handleUpdateTask(task._id, item.todoName, editText);
+                  }}
+                  DeleteTask={() => handleDeleteTask(task._id, item.todoName)}
                   heading={item.todoName}
                   projects={projects}
                   setProjects={setProjects}

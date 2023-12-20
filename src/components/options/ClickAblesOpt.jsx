@@ -10,6 +10,7 @@ const Wrapper = styled(FlexBox)`
   border-radius: 0.5rem;
   row-gap: 0.5rem;
   border: 1px solid black;
+  z-index: 5;
 `;
 
 const Option = styled(FlexBox)``;

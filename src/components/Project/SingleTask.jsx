@@ -48,10 +48,19 @@ const SingleTask = ({
   setTaskStatus,
   setTaskHighlight,
   heading,
+  EditTask,
+  DeleteTask,
+  setEditText,
+  isEditing,
+  setIsEditing,
+  editId,
+  setEditId,
+  index,
 }) => {
   const [isHighlighted, setHighlighted] = useState(false);
   const [optionOpen, setOptionOpen] = useState(false);
   const optionRef = useRef(null);
+  const [editedText, setEditedText] = useState(text);
 
   const data = ["Move to Tomorrow", "Highlights", "Edit", "Delete"];
 
@@ -61,19 +70,68 @@ const SingleTask = ({
 
   const handleOptionIconClick = () => {
     setOptionOpen(!optionOpen);
+    console.log(optionOpen);
   };
   const projectClick = (filterType) => {
-    if (filterType === "Highlights") {
+    if (filterType === "Edit") {
+      handleEditIconClick();
+
+      EditTask();
+      console.log(index, editId, "edit is clicked");
+    } else if (filterType === "Delete") {
+      DeleteTask();
+    } else if (filterType === "Highlights") {
       console.log("highlight is clicked");
       setTaskHighlight();
       setHighlighted(!isHighlighted);
-      setOptionOpen(false);
     }
+    setOptionOpen(false);
   };
   const handleHighlightClick = () => {
     // Close the options after clicking "Highlight"
   };
+  const handleEditIconClick = () => {
+    setOptionOpen(false);
+    setIsEditing(true);
+  };
+  const handleEditInputChange = (e) => {
+    setEditedText(e.target.value);
+    // setEditText(editedText);
+  };
+  const handleUpdateTask = async (id) => {
+    console.log(heading);
+    try {
+      const response = await axios.patch(
+        `https://todo-backend-daem.vercel.app/update-task-by-todo/${id}`,
+        {
+          name: editText,
+        }
+      );
 
+      const updatedTasks = projects.map((project) => {
+        if (project._id === projectId) {
+          const updatedTaskList = project.tasks.map((task) => {
+            if (task._id === id) {
+              return { ...task, name: editText };
+            }
+            return task;
+          });
+          return { ...project, tasks: updatedTaskList };
+        }
+        return project;
+      });
+
+      setProjects(updatedTasks);
+      console.log(response.data);
+    } catch (error) {
+      console.log("Error in updating task", error);
+    }
+  };
+  const handleEditTask = () => {
+    EditTask(editedText); // Pass the edited text to the EditTask function
+    setIsEditing(false);
+    setEditId(null); // Exit editing mode
+  };
   const handleDocumentClick = (e) => {
     // Close the OptionBox if the click is outside the OptionBox
     if (
@@ -97,14 +155,35 @@ const SingleTask = ({
   // console.log(filteredTasks[0]?.tasks, heading, "single card");
   return (
     <Wrapper isHighlighted={isHighlighted}>
-      <InputBox style={{ textDecoration: isChecked ? "line-through" : "none" }}>
-        <input
-          type="checkbox"
-          checked={isChecked}
-          onChange={handleCheckboxChange}
-        />
-        <p onClick={handleCheckboxChange}>{text}</p>
-      </InputBox>
+      {isEditing && editId === index ? ( // Display input field when editing
+        <InputBox
+          style={{ textDecoration: isChecked ? "line-through" : "none" }}
+        >
+          <input
+            type="text"
+            value={editedText}
+            onChange={handleEditInputChange}
+            // onBlur={handleEditTask} // Handle task update on blur (losing focus)
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleEditTask(); // Handle task update on pressing Enter
+              }
+            }}
+          />
+        </InputBox>
+      ) : (
+        // Display task text when not editing
+        <InputBox
+          style={{ textDecoration: isChecked ? "line-through" : "none" }}
+        >
+          <input
+            type="checkbox"
+            checked={isChecked}
+            onChange={handleCheckboxChange}
+          />
+          <p onClick={handleCheckboxChange}>{text}</p>
+        </InputBox>
+      )}
       <CRUDbox>
         <MoreHorizOutlinedIcon onClick={handleOptionIconClick} />
         {optionOpen && (

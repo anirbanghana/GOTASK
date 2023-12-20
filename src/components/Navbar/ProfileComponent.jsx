@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Modal from "../../common/ui/Modal";
 import { useNavigate } from "react-router-dom";
+import userImg from "../../../src/assets/userimg.png";
 
 const ProfileContainer = styled.div`
   display: flex;
@@ -85,7 +86,7 @@ const CancelButton = styled.button`
 `;
 
 const ProfileComponent = ({ user, onSignOut }) => {
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   const [modalOpen, setmodalOpen] = useState(false);
   const handleSignOut = () => {
     // Perform sign-out logic here
@@ -109,17 +110,16 @@ const ProfileComponent = ({ user, onSignOut }) => {
 
   return (
     <>
-    <ProfileContainer onClick={openModal}>
-      <UserPicContainer>
-        <UserPic src="src\assets\userimg.png" alt="User Profile" />
-      </UserPicContainer>
-      <UserInfo>
-        <UserName>Client</UserName>
-        <UserDesignation>manager</UserDesignation>
-      </UserInfo>
+      <ProfileContainer onClick={openModal}>
+        <UserPicContainer>
+          <UserPic src={userImg} alt="User Profile" />
+        </UserPicContainer>
+        <UserInfo>
+          <UserName>Client</UserName>
+          <UserDesignation>manager</UserDesignation>
+        </UserInfo>
       </ProfileContainer>
 
-      
       {modalOpen && (
         <Modal M1>
           <SignOutBox>
@@ -132,9 +132,8 @@ const ProfileComponent = ({ user, onSignOut }) => {
             </Buttons>
           </SignOutBox>
         </Modal>
-        
       )}
-      </>
+    </>
   );
 };
 

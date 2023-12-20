@@ -4,6 +4,7 @@ import { BsEye, BsEyeSlash } from "react-icons/bs";
 import FlexBox from "../../common/ui/FlexBox";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import goTaskimg from "../../../src/assets/GoTask.png";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -145,7 +146,7 @@ const Register = ({ onLoginClick }) => {
   return (
     <Wrapper>
       <Logo>
-        <img src="src\assets\GoTask.png" alt="GoTask" />
+        <img src={goTaskimg} alt="GoTask" />
       </Logo>
       <Container>
         <Form onSubmit={handleSubmit}>

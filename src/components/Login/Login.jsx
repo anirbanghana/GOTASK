@@ -10,6 +10,7 @@ import FormControl from "@mui/material/FormControl";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { useNavigate } from "react-router-dom";
+import goTaskimg from "../../../src/assets/GoTask.png";
 import axios from "axios";
 
 const Wrapper = styled.div`
@@ -137,7 +138,7 @@ const Login = ({ onRegisterClick, userId, setUserId }) => {
   return (
     <Wrapper column>
       <Logo>
-        <img src="src\assets\GoTask.png" alt="GoTask" />
+        <img src={goTaskimg} alt="GoTask" />
       </Logo>
       <Container>
         <Form onSubmit={handleSubmit}>

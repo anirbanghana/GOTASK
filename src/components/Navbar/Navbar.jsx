@@ -10,6 +10,7 @@ import MobileNav from "./MobileNav";
 import NewProjectButton from "./NewProjectButton";
 import ProfileComponent from "./ProfileComponent";
 import { useEffect } from "react";
+import goTaskimg from "../../../src/assets/GoTask.png";
 
 const Wrapper = styled(FlexBox)`
   background: white;
@@ -65,7 +66,7 @@ const Navbar = ({
   return (
     <Wrapper>
       <Logo>
-        <img src="src\assets\GoTask.png" alt="GoTask" width="90px" />
+        <img src={goTaskimg} alt="GoTask" width="90px" />
       </Logo>
       <SearchBox
         filterType={filterType}

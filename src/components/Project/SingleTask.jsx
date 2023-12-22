@@ -56,6 +56,7 @@ const SingleTask = ({
   editId,
   setEditId,
   index,
+  moveTomorrow,
 }) => {
   const [isHighlighted, setHighlighted] = useState(false);
   const [optionOpen, setOptionOpen] = useState(false);
@@ -84,6 +85,8 @@ const SingleTask = ({
       console.log("highlight is clicked");
       setTaskHighlight();
       setHighlighted(!isHighlighted);
+    } else if (filterType === "Move to Tomorrow") {
+      moveTomorrow();
     }
     setOptionOpen(false);
   };

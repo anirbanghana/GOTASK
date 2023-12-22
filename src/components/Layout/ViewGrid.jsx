@@ -79,9 +79,7 @@ const dummydata = [
 
 const ViewGrid = ({ projects, setProjects, filterType, heading, userId }) => {
   const [data, setData] = useState([]);
-
   const url = "https://todo-backend-daem.vercel.app/get-all-todos";
-  // const userId = "6576aaae6c2e044a510b424e";
   console.log(filterType, "Inside the grid view");
   useEffect(() => {
     axios
@@ -99,6 +97,42 @@ const ViewGrid = ({ projects, setProjects, filterType, heading, userId }) => {
     console.log("viewgrid", projects);
   }, []);
 
+  // const filterTasksByDate = (tasks, dateType) => {
+  //   const currentDate = new Date();
+  //   const tomorrowDate = new Date();
+  //   console.log(currentDate, tomorrowDate);
+  //   tomorrowDate.setDate(currentDate.getDate() + 1);
+  //   console.log(tasks);
+  //   const dateToCompare = dateType === "today" ? currentDate : tomorrowDate;
+  //   // Get today's date
+  //   const filteredTasks = tasks.filter((task) => {
+  //     const dateString = task.Date;
+
+  //     const dateParts = dateString.split("/");
+  //     const month = parseInt(dateParts[0], 10);
+  //     const day = parseInt(dateParts[1], 10);
+  //     const year = parseInt(dateParts[2], 10);
+  //     console.log(`${day}${month}${year}`);
+  //     return (
+  //       year === dateToCompare.getFullYear() &&
+  //       month === dateToCompare.getMonth() + 1 &&
+  //       day === dateToCompare.getDate()
+  //     );
+  //   });
+  //   console.log(filteredTasks, "Filtered Tasks for", dateType);
+  //   return filteredTasks;
+  // };
+
+  // const todayTasks = filterTasksByDate(data, "today");
+  // const tomorrowTasks = filterTasksByDate(data, "tomorrow");
+  //   });
+  //   console.log(filteredTasks, "Filtered Tasks for", dateType);
+  //   return filteredTasks;
+  // };
+
+  // const todayTasks = filterTasksByDate(data, "today");
+  // const tomorrowTasks = filterTasksByDate(data, "tomorrow");
+
   return (
     <Wrapper column>
       <FlexBox column rowGap="1rem">
@@ -106,6 +140,7 @@ const ViewGrid = ({ projects, setProjects, filterType, heading, userId }) => {
         <FlexScroll>
           <ProjectCard
             filterType={filterType}
+            today={true}
             projects={projects}
             userId={userId}
             setProjects={setProjects}
@@ -114,7 +149,6 @@ const ViewGrid = ({ projects, setProjects, filterType, heading, userId }) => {
       </FlexBox>
       <FlexBox column rowGap="1rem">
         <SectionWithChipAndHr>
-          {/* checking for tomrrow */}
           <ChipToday isToday={0} />
           <HrBox>
             <hr />
@@ -125,6 +159,8 @@ const ViewGrid = ({ projects, setProjects, filterType, heading, userId }) => {
             userId={userId}
             filterType={filterType}
             projects={projects}
+            today={false}
+            // tasks={tomorrowTasks}
             setProjects={setProjects}
           />
         </FlexScroll>

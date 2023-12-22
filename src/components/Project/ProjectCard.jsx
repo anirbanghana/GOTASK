@@ -76,14 +76,7 @@ const EditDeleteContainer = styled(FlexBox)`
   right: 30%;
 `;
 
-const ProjectCard = ({
-  filterType,
-  heading,
-  key,
-  userId,
-  projects,
-  setProjects,
-}) => {
+const ProjectCard = ({ filterType, userId, projects, setProjects, today }) => {
   const [editDeleteBox, setEditDeleteBox] = useState(false);
   const optionRef = useRef(null);
   const [openedDotIndex, setOpenedDotIndex] = useState(null);
@@ -233,6 +226,64 @@ const ProjectCard = ({
       setEditDeleteBox(true);
     }
   };
+  // const todayDate = new Date();
+
+  // const tomorrowDate = new Date(todayDate);
+  // tomorrowDate.setDate(todayDate.getDate() + 1);
+
+  const currentDate = new Date();
+  currentDate.setDate(currentDate.getDate());
+  const tomorrowDate = new Date();
+  tomorrowDate.setDate(currentDate.getDate() + 1);
+  const dateStringNew = tomorrowDate;
+  const dateNew = new Date(dateStringNew);
+  const formattedDate =
+    ("0" + (dateNew.getMonth() + 1)).slice(-2) +
+    "/" +
+    ("0" + dateNew.getDate()).slice(-2) +
+    "/" +
+    dateNew.getFullYear() +
+    ", " +
+    ("0" + dateNew.getHours()).slice(-2) +
+    ":" +
+    ("0" + dateNew.getMinutes()).slice(-2) +
+    ":" +
+    ("0" + dateNew.getSeconds()).slice(-2) +
+    " " +
+    (dateNew.getHours() >= 12 ? "PM" : "AM");
+
+  const handleMoveTomorrow = async (itemId, heading) => {
+    console.log(itemId, heading);
+    const response = await axios.patch(
+      `https://todo-backend-daem.vercel.app/update-task-by-todo/${itemId}`,
+      {
+        Date: formattedDate,
+      }
+    );
+    console.log(response.data.updatedTask);
+    const updatedTask = response.data.updatedTask;
+    const updatedProjects = projects.map((project) => {
+      if (project.todoName === heading) {
+        const updatedTasks = project.tasks.map((task) => {
+          if (task._id === itemId) {
+            return {
+              ...task,
+              Date: formattedDate,
+            };
+          }
+          return task;
+        });
+
+        return {
+          ...project,
+          tasks: updatedTasks,
+        };
+      }
+      return project;
+    });
+
+    setProjects(updatedProjects);
+  };
   const handleTaskStatusChange = (itemId, heading) => {
     const updatedProjects = projects?.map((project) => {
       if (project.todoName === heading) {
@@ -272,6 +323,11 @@ const ProjectCard = ({
     setProjects(updatedProjects);
     console.log(projects);
   };
+
+  // const currentDate = new Date();
+  // const tomorrowDate = new Date();
+  // tomorrowDate.setDate(currentDate.getDate() + 1);
+
   return (
     <>
       {projects?.map((item) => (
@@ -337,15 +393,27 @@ const ProjectCard = ({
 
           <ListWrapper>
             {item.tasks
-              .filter((task) => {
+              ?.filter((task) => {
                 if (filterType === "Complete") {
                   return task.isChecked;
                 } else if (filterType === "Outstanding") {
                   return task.ishighlight;
                 }
-                return true; // Show all tasks by default
+                const dateToCompare = today ? currentDate : tomorrowDate;
+                const dateString = task.Date;
+
+                const dateParts = dateString.split("/");
+                const month = parseInt(dateParts[0], 10);
+                const day = parseInt(dateParts[1], 10);
+                const year = parseInt(dateParts[2], 10);
+                return (
+                  year === dateToCompare.getFullYear() &&
+                  month === dateToCompare.getMonth() + 1 &&
+                  day === dateToCompare.getDate()
+                );
+                // return task;
               })
-              .map((task, index) => (
+              ?.map((task, index) => (
                 <SingleTask
                   key={task._id}
                   index={task._id}
@@ -366,6 +434,9 @@ const ProjectCard = ({
                     handleUpdateTask(task._id, item.todoName, editText);
                   }}
                   DeleteTask={() => handleDeleteTask(task._id, item.todoName)}
+                  moveTomorrow={() =>
+                    handleMoveTomorrow(task._id, item.todoName)
+                  }
                   heading={item.todoName}
                   projects={projects}
                   setProjects={setProjects}

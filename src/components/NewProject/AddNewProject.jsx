@@ -87,7 +87,9 @@ const AddNewProject = ({ close, projects, setProjects, userId }) => {
       );
       console.log(response.data.todo);
 
-      setProjects([...projects, response.data.todo]);
+      // setProjects([...projects, response.data.todo]);
+      setProjects((prevProjects) => [...prevProjects, response.data.todo]);
+
       console.log(projects, "this is projects");
       setFormData("");
       close();

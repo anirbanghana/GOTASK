@@ -15,7 +15,12 @@ const Option = styled(FlexBox)`
   cursor: pointer;
 `;
 
-const FilterOption = ({ filterType, setFilterType }) => {
+const FilterOption = ({
+  filterType,
+  setFilterType,
+  setFilterOptionVisible,
+  isFilterOptionVisible,
+}) => {
   const handleClick = (filter) => {
     setFilterType(filter);
     console.log(filter);
@@ -23,13 +28,28 @@ const FilterOption = ({ filterType, setFilterType }) => {
 
   return (
     <Wrapper column>
-      <Option onClick={() => handleClick("All")}>
+      <Option
+        onClick={() => {
+          setFilterOptionVisible(!isFilterOptionVisible);
+          handleClick("All");
+        }}
+      >
         <Body2>All</Body2>
       </Option>
-      <Option onClick={() => handleClick("Outstanding")}>
+      <Option
+        onClick={() => {
+          setFilterOptionVisible(!isFilterOptionVisible);
+          handleClick("Outstanding");
+        }}
+      >
         <Body2>Outstanding</Body2>
       </Option>
-      <Option onClick={() => handleClick("Complete")}>
+      <Option
+        onClick={() => {
+          setFilterOptionVisible(!isFilterOptionVisible);
+          handleClick("Complete");
+        }}
+      >
         <Body2>Complete</Body2>
       </Option>
     </Wrapper>

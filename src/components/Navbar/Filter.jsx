@@ -12,23 +12,22 @@ const FilterWrapper = styled(FlexBox)`
   border: 1px solid #d6d6d6;
   align-items: center;
   cursor: pointer;
-  position:relative;
+  position: relative;
 `;
 
 const FilterWithOptnBox = styled(FlexBox)`
-position:absolute;
-top:50%;
-right:70%;
-width:fit-content;
-
+  position: absolute;
+  top: 50%;
+  right: 70%;
+  width: fit-content;
 `;
 
-const Filter = ({filterType,setFilterType}) => {
+const Filter = ({ filterType, setFilterType }) => {
   const [isFilterOptionVisible, setFilterOptionVisible] = useState(false);
   const filterWrapperRef = useRef(null);
 
   const handleOptionIconClick = () => {
-    setFilterOptionVisible(!isFilterOptionVisible);
+    // setFilterOptionVisible(!isFilterOptionVisible);
   };
 
   const handleDocumentClick = (e) => {
@@ -51,14 +50,19 @@ const Filter = ({filterType,setFilterType}) => {
   }, [isFilterOptionVisible]);
 
   return (
-      <FilterWrapper >
-        <TuneOutlinedIcon onClick={handleOptionIconClick}/>
-        {isFilterOptionVisible && (
-          <FilterWithOptnBox ref={filterWrapperRef}>
-            <FilterOption filterType={filterType} setFilterType={setFilterType}/>
-          </FilterWithOptnBox>
-        )}
-      </FilterWrapper>
+    <FilterWrapper>
+      <TuneOutlinedIcon onClick={handleOptionIconClick} />
+      {isFilterOptionVisible && (
+        // <FilterWithOptnBox ref={filterWrapperRef}>
+        <FilterOption
+          filterType={filterType}
+          setFilterType={setFilterType}
+          setFilterOptionVisible={setFilterOptionVisible}
+          isFilterOptionVisible={isFilterOptionVisible}
+        />
+        // </FilterWithOptnBox>
+      )}
+    </FilterWrapper>
   );
 };
 

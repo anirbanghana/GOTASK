@@ -323,6 +323,20 @@ const ProjectCard = ({ filterType, userId, projects, setProjects, today }) => {
     setProjects(updatedProjects);
     console.log(projects);
   };
+  const todayTomorrow = (task) => {
+    const dateToCompare = today ? currentDate : tomorrowDate;
+    const dateString = task.Date;
+
+    const dateParts = dateString.split("/");
+    const month = parseInt(dateParts[0], 10);
+    const day = parseInt(dateParts[1], 10);
+    const year = parseInt(dateParts[2], 10);
+    return (
+      year === dateToCompare.getFullYear() &&
+      month === dateToCompare.getMonth() + 1 &&
+      day === dateToCompare.getDate()
+    );
+  };
 
   // const currentDate = new Date();
   // const tomorrowDate = new Date();
@@ -395,23 +409,12 @@ const ProjectCard = ({ filterType, userId, projects, setProjects, today }) => {
             {item.tasks
               ?.filter((task) => {
                 if (filterType === "Complete") {
-                  return task.isChecked;
+                  return task.isChecked && todayTomorrow(task);
                 } else if (filterType === "Outstanding") {
-                  return task.ishighlight;
+                  return task.ishighlight && todayTomorrow(task);
                 }
-                const dateToCompare = today ? currentDate : tomorrowDate;
-                const dateString = task.Date;
 
-                const dateParts = dateString.split("/");
-                const month = parseInt(dateParts[0], 10);
-                const day = parseInt(dateParts[1], 10);
-                const year = parseInt(dateParts[2], 10);
-                return (
-                  year === dateToCompare.getFullYear() &&
-                  month === dateToCompare.getMonth() + 1 &&
-                  day === dateToCompare.getDate()
-                );
-                // return task;
+                return todayTomorrow(task);
               })
               ?.map((task, index) => (
                 <SingleTask

@@ -8,19 +8,6 @@ import axios from "axios";
 function Main({ projects, setProjects, userId }) {
   const [filterType, setFilterType] = useState("All");
 
-  //   useEffect(() => {
-  //     axios
-  //       .get(
-  //         "https://todo-backend-daem.vercel.app/get-all-todos/6576aaae6c2e044a510b424e"
-  //       )
-  //       .then((response) => {
-  //         setProjects(response.data.todo);
-  //       })
-  //       .catch((error) => {
-  //         console.error("Error fetching data:", error);
-  //       });
-  //   }, []);
-
   return (
     <>
       <Navbar
@@ -41,13 +28,3 @@ function Main({ projects, setProjects, userId }) {
 }
 
 export default Main;
-{
-  /* <BrowserRouter>
-<Routes>
-  <Route path="/" element={<Login />} />
-  <Route path="/homepage" element={<App />} />
-  <Route path="/register" element={<Register />} />
-
-</Routes>
-</BrowserRouter> */
-}

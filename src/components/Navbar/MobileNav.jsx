@@ -3,6 +3,7 @@ import styled from "styled-components";
 import FlexBox from "../../common/ui/FlexBox";
 import NewProjectButton from "./NewProjectButton";
 import ProfileComponent from "./ProfileComponent";
+import { useEffect } from "react";
 const Wrapper = styled(FlexBox)`
   width: 100%;
   height: 100%;
@@ -17,10 +18,17 @@ const Wrapper = styled(FlexBox)`
   transition: 3s ease-in-out;
 `;
 
-const MobileNav = () => {
+const MobileNav = ({ projects, setProjects, userId }) => {
+  useEffect(() => {
+    console.log(projects, "this is movile nav");
+  });
   return (
     <Wrapper>
-      <NewProjectButton />
+      <NewProjectButton
+        projects={projects}
+        setProjects={setProjects}
+        userId={userId}
+      />
       <ProfileComponent />
     </Wrapper>
   );

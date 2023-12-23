@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import FlexBox from "../../common/ui/FlexBox";
 import AddNewProject from "../NewProject/AddNewProject";
 import Modal from "../../common/ui/Modal";
-import { useEffect } from "react";
 
 const NewProjectButton = ({ projects, setProjects, userId }) => {
   const [modalOpen, setmodalOpen] = useState(false);

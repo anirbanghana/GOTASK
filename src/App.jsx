@@ -7,8 +7,8 @@ import { BrowserRouter } from "react-router-dom";
 import { Routes } from "react-router-dom";
 import { Route } from "react-router-dom";
 import Login from "./components/Login/Login.jsx";
-import Main from "./Main.jsx";
 import Register from "./components/Login/Register.jsx";
+import Main from "./Main.jsx";
 
 function App() {
   const [filterType, setFilterType] = useState("All");

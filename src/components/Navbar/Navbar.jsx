@@ -68,12 +68,7 @@ const Navbar = ({
       <Logo>
         <img src={goTaskimg} alt="GoTask" width="90px" />
       </Logo>
-      <SearchBox
-        filterType={filterType}
-        setFilterType={setFilterType}
-        // searchItem={searchItem}
-        // setSearchItem={setSearchItem}
-      />
+      <SearchBox filterType={filterType} setFilterType={setFilterType} />
 
       <ProfileBox>
         <NewProjectButton
@@ -103,7 +98,13 @@ const Navbar = ({
           }}
         />
       )}
-      {open && <MobileNav />}
+      {open && (
+        <MobileNav
+          projects={projects}
+          setProjects={setProjects}
+          userId={userId}
+        />
+      )}
     </Wrapper>
   );
 };

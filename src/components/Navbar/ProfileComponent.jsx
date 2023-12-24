@@ -93,8 +93,8 @@ const ProfileComponent = ({ user, onSignOut }) => {
     // ...
 
     // Close the sign-out modal
-    setSignOutModalVisible(false);
-    navigate("/homepage");
+    // setSignOutModalVisible(false);
+    navigate("/");
 
     // Redirect to the login page
     // Example: window.location.href = '/login';

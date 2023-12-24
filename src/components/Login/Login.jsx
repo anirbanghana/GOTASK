@@ -12,6 +12,7 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { useNavigate } from "react-router-dom";
 import goTaskimg from "../../../src/assets/GoTask.png";
 import axios from "axios";
+import { useEffect } from "react";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -96,7 +97,7 @@ const Login = ({ onRegisterClick, userId, setUserId }) => {
 
   const [formData, setFormData] = useState({
     email: "",
-    password: "123",
+    password: "",
   });
 
   const navigate = useNavigate();
@@ -155,7 +156,7 @@ const Login = ({ onRegisterClick, userId, setUserId }) => {
           <FormGroup>
             <Label>Password</Label>
             <Input2
-              type="number"
+              type="password"
               name="password"
               value={formData.password}
               onChange={handleChange}

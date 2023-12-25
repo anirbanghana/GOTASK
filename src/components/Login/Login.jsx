@@ -109,7 +109,10 @@ const Login = ({ onRegisterClick, userId, setUserId }) => {
       [name]: value,
     }));
   };
-
+  // if (localStorage.getItem("userId")) {
+  //   console.log(localStorage.getItem("userId"));
+  //   navigate("/homepage");
+  // }
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(formData.email, formData.password);
@@ -124,10 +127,15 @@ const Login = ({ onRegisterClick, userId, setUserId }) => {
 
       if (response.status === 200) {
         console.log("Login successful");
-        navigate("/homepage");
+
         console.log(response.data.user._id);
         setUserId(response.data.user._id);
-        console.log(userId);
+        // localStorage.setItem("isAuthenticated", true);
+        localStorage.setItem("userId", response.data.user._id);
+        const user = localStorage.getItem("userId");
+        // console.log(user, "uring login");
+        setUserId(user);
+        navigate("/homepage");
       } else {
         console.error("Login failed");
       }

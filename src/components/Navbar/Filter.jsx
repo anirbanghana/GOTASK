@@ -27,7 +27,7 @@ const Filter = ({ filterType, setFilterType }) => {
   const filterWrapperRef = useRef(null);
 
   const handleOptionIconClick = () => {
-    // setFilterOptionVisible(!isFilterOptionVisible);
+    setFilterOptionVisible(!isFilterOptionVisible);
   };
 
   const handleDocumentClick = (e) => {
@@ -53,14 +53,14 @@ const Filter = ({ filterType, setFilterType }) => {
     <FilterWrapper>
       <TuneOutlinedIcon onClick={handleOptionIconClick} />
       {isFilterOptionVisible && (
-        // <FilterWithOptnBox ref={filterWrapperRef}>
-        <FilterOption
-          filterType={filterType}
-          setFilterType={setFilterType}
-          setFilterOptionVisible={setFilterOptionVisible}
-          isFilterOptionVisible={isFilterOptionVisible}
-        />
-        // </FilterWithOptnBox>
+        <FilterWithOptnBox ref={filterWrapperRef}>
+          <FilterOption
+            filterType={filterType}
+            setFilterType={setFilterType}
+            setFilterOptionVisible={setFilterOptionVisible}
+            isFilterOptionVisible={isFilterOptionVisible}
+          />
+        </FilterWithOptnBox>
       )}
     </FilterWrapper>
   );

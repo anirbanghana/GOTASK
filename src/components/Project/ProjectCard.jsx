@@ -20,6 +20,8 @@ const Wrapper = styled(FlexBox)`
   row-gap: 1rem;
   min-width: 23rem;
   max-width: 30rem;
+  position: relative;
+
   @media (max-width: 768px) {
     width: 100%;
     min-width: 20rem;
@@ -94,7 +96,6 @@ const ProjectCard = ({ filterType, userId, projects, setProjects, today }) => {
       const newProject = projects.filter((project) => project._id === id);
       setSelectedProject(newProject[0].todoName);
       openModal();
-      handleUpdateProject(id);
     } else if (filter === "Delete") {
       setEditId(id);
       handleDeleteProject(id);
@@ -185,6 +186,7 @@ const ProjectCard = ({ filterType, userId, projects, setProjects, today }) => {
     }
   };
   const handleCheckBoxClick = async (projectId) => {
+    console.log(inputTexts[projectId]);
     const newProject = projects.find((project) => project._id === projectId);
     if (inputTexts[projectId]?.trim()) {
       try {
@@ -194,6 +196,7 @@ const ProjectCard = ({ filterType, userId, projects, setProjects, today }) => {
             userId: newProject.userId,
             todoId: projectId,
             name: inputTexts[projectId],
+            Date: new Date().toLocaleString(),
           }
         );
         const updatedProjects = projects.map((project) => {
@@ -205,8 +208,10 @@ const ProjectCard = ({ filterType, userId, projects, setProjects, today }) => {
           }
           return project;
         });
-
+        console.log(response.data.task);
+        console.log(updatedProjects);
         setProjects(updatedProjects);
+        console.log(projects);
         setInputTexts({
           ...inputTexts,
           [projectId]: "",
@@ -226,10 +231,6 @@ const ProjectCard = ({ filterType, userId, projects, setProjects, today }) => {
       setEditDeleteBox(true);
     }
   };
-  // const todayDate = new Date();
-
-  // const tomorrowDate = new Date(todayDate);
-  // tomorrowDate.setDate(todayDate.getDate() + 1);
 
   const currentDate = new Date();
   currentDate.setDate(currentDate.getDate());
@@ -238,22 +239,15 @@ const ProjectCard = ({ filterType, userId, projects, setProjects, today }) => {
   const dateStringNew = tomorrowDate;
   const dateNew = new Date(dateStringNew);
   const formattedDate =
-    ("0" + (dateNew.getMonth() + 1)).slice(-2) +
-    "/" +
     ("0" + dateNew.getDate()).slice(-2) +
     "/" +
-    dateNew.getFullYear() +
-    ", " +
-    ("0" + dateNew.getHours()).slice(-2) +
-    ":" +
-    ("0" + dateNew.getMinutes()).slice(-2) +
-    ":" +
-    ("0" + dateNew.getSeconds()).slice(-2) +
-    " " +
-    (dateNew.getHours() >= 12 ? "PM" : "AM");
+    ("0" + (dateNew.getMonth() + 1)).slice(-2) +
+    "/" +
+    dateNew.getFullYear();
 
   const handleMoveTomorrow = async (itemId, heading) => {
     console.log(itemId, heading);
+    console.log(formattedDate);
     const response = await axios.patch(
       `https://todo-backend-daem.vercel.app/update-task-by-todo/${itemId}`,
       {
@@ -323,24 +317,29 @@ const ProjectCard = ({ filterType, userId, projects, setProjects, today }) => {
     setProjects(updatedProjects);
     console.log(projects);
   };
+
   const todayTomorrow = (task) => {
     const dateToCompare = today ? currentDate : tomorrowDate;
     const dateString = task.Date;
 
     const dateParts = dateString.split("/");
-    const month = parseInt(dateParts[0], 10);
-    const day = parseInt(dateParts[1], 10);
+    const day = parseInt(dateParts[0], 10);
+    const month = parseInt(dateParts[1], 10);
     const year = parseInt(dateParts[2], 10);
+    console.log(
+      day,
+      month,
+      year,
+      dateToCompare.getFullYear(),
+      dateToCompare.getMonth() + 1,
+      dateToCompare.getDate()
+    );
     return (
       year === dateToCompare.getFullYear() &&
       month === dateToCompare.getMonth() + 1 &&
       day === dateToCompare.getDate()
     );
   };
-
-  // const currentDate = new Date();
-  // const tomorrowDate = new Date();
-  // tomorrowDate.setDate(currentDate.getDate() + 1);
 
   return (
     <>
@@ -410,11 +409,14 @@ const ProjectCard = ({ filterType, userId, projects, setProjects, today }) => {
               ?.filter((task) => {
                 if (filterType === "Complete") {
                   return task.isChecked && todayTomorrow(task);
+                  // return task.isChecked;
                 } else if (filterType === "Outstanding") {
                   return task.ishighlight && todayTomorrow(task);
+                  // return task.ishighlight;
                 }
 
                 return todayTomorrow(task);
+                // return task;
               })
               ?.map((task, index) => (
                 <SingleTask

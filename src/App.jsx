@@ -8,7 +8,7 @@ import { Routes } from "react-router-dom";
 import { Route } from "react-router-dom";
 import Login from "./components/Login/Login.jsx";
 import Register from "./components/Login/Register.jsx";
-import Main from "./Main.jsx";
+import Main from "./Main";
 
 function App() {
   const [filterType, setFilterType] = useState("All");
@@ -17,8 +17,11 @@ function App() {
 
   useEffect(() => {
     console.log(userId, "in app");
+    const user = localStorage.getItem("userId");
+    setUserId(user);
+
     const fetchData = async () => {
-      console.log(userId);
+      console.log(userId, "local storage");
       try {
         const response = await axios.get(
           `https://todo-backend-daem.vercel.app/get-all-todos/${userId}`

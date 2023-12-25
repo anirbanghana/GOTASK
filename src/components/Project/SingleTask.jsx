@@ -3,6 +3,7 @@ import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
 import ClickAblesOpt from "../options/ClickAblesOpt";
 import styled from "@emotion/styled";
 import FlexBox from "../../common/ui/FlexBox";
+import axios from "axios";
 
 const Wrapper = styled(FlexBox)`
   border-radius: 0.5rem;
@@ -29,7 +30,7 @@ const CRUDbox = styled(FlexBox)`
 
 const OptionBox = styled(FlexBox)`
   position: absolute;
-  top: 70%;
+  top: 50%;
   left: 50%;
 
   z-index: 1;
@@ -101,35 +102,7 @@ const SingleTask = ({
     setEditedText(e.target.value);
     // setEditText(editedText);
   };
-  const handleUpdateTask = async (id) => {
-    console.log(heading);
-    try {
-      const response = await axios.patch(
-        `https://todo-backend-daem.vercel.app/update-task-by-todo/${id}`,
-        {
-          name: editText,
-        }
-      );
 
-      const updatedTasks = projects.map((project) => {
-        if (project._id === projectId) {
-          const updatedTaskList = project.tasks.map((task) => {
-            if (task._id === id) {
-              return { ...task, name: editText };
-            }
-            return task;
-          });
-          return { ...project, tasks: updatedTaskList };
-        }
-        return project;
-      });
-
-      setProjects(updatedTasks);
-      console.log(response.data);
-    } catch (error) {
-      console.log("Error in updating task", error);
-    }
-  };
   const handleEditTask = () => {
     EditTask(editedText); // Pass the edited text to the EditTask function
     setIsEditing(false);
@@ -155,7 +128,6 @@ const SingleTask = ({
       document.removeEventListener("mousedown", handleDocumentClick);
     };
   }, [optionOpen]);
-  // console.log(filteredTasks[0]?.tasks, heading, "single card");
   return (
     <Wrapper isHighlighted={isHighlighted}>
       {isEditing && editId === index ? ( // Display input field when editing

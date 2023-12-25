@@ -43,13 +43,6 @@ const Edit = ({
   setmodalOpen,
 }) => {
   const [editedProject, setEditedProject] = useState(selectedProject || "");
-  //   const [tasks, setTasks] = useState([]);
-
-  //   useEffect(() => {
-  //     const projectTasks =
-  //       projects.find((proj) => proj.name === selectedProject)?.tasks || [];
-  //     setTasks(projectTasks);
-  //   }, [selectedProject, projects]);
 
   const handleProject = (event) => {
     setEditedProject(event.target.value);
@@ -57,21 +50,20 @@ const Edit = ({
 
   const handleUpdateProject = async () => {
     if (editedProject.trim() !== "") {
-      // console.log(projects, todoId, selectedProject);
       const newProject = projects.filter((project) => project._id === todoId);
-      // console.log(newProject, newProject[0].userId, todoId, editedProject);
-      console.log(newProject[0].userId, "this is new project");
+      console.log(newProject[0], todoId, editedProject, "this is new project");
       try {
         const response = await axios.patch(
           "https://todo-backend-daem.vercel.app/update-todo",
           {
-            userId: newProject[0].userId,
+            userId: userId,
             todoId: todoId,
             todoName: editedProject,
           }
         );
 
         const updatedData = response.data.todo;
+
         setProjects((prevProjects) => {
           const updatedProjects = prevProjects.map((project) => {
             if (project._id === updatedData._id) {
@@ -81,8 +73,7 @@ const Edit = ({
           });
           return updatedProjects;
         });
-
-        open(false);
+        console.log(updatedData, "after editing");
       } catch (error) {
         console.log("Error in updating", error);
       }

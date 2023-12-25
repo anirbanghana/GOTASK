@@ -97,42 +97,6 @@ const ViewGrid = ({ projects, setProjects, filterType, heading, userId }) => {
     console.log("viewgrid", projects);
   }, []);
 
-  // const filterTasksByDate = (tasks, dateType) => {
-  //   const currentDate = new Date();
-  //   const tomorrowDate = new Date();
-  //   console.log(currentDate, tomorrowDate);
-  //   tomorrowDate.setDate(currentDate.getDate() + 1);
-  //   console.log(tasks);
-  //   const dateToCompare = dateType === "today" ? currentDate : tomorrowDate;
-  //   // Get today's date
-  //   const filteredTasks = tasks.filter((task) => {
-  //     const dateString = task.Date;
-
-  //     const dateParts = dateString.split("/");
-  //     const month = parseInt(dateParts[0], 10);
-  //     const day = parseInt(dateParts[1], 10);
-  //     const year = parseInt(dateParts[2], 10);
-  //     console.log(`${day}${month}${year}`);
-  //     return (
-  //       year === dateToCompare.getFullYear() &&
-  //       month === dateToCompare.getMonth() + 1 &&
-  //       day === dateToCompare.getDate()
-  //     );
-  //   });
-  //   console.log(filteredTasks, "Filtered Tasks for", dateType);
-  //   return filteredTasks;
-  // };
-
-  // const todayTasks = filterTasksByDate(data, "today");
-  // const tomorrowTasks = filterTasksByDate(data, "tomorrow");
-  //   });
-  //   console.log(filteredTasks, "Filtered Tasks for", dateType);
-  //   return filteredTasks;
-  // };
-
-  // const todayTasks = filterTasksByDate(data, "today");
-  // const tomorrowTasks = filterTasksByDate(data, "tomorrow");
-
   return (
     <Wrapper column>
       <FlexBox column rowGap="1rem">

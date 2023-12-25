@@ -133,10 +133,10 @@ const Register = ({ onLoginClick }) => {
 
       if (response.ok) {
         console.log("Registration successful");
-        navigate("/homepage");
+        navigate("/");
       } else {
         console.error("Registration failed", response.data.message);
-        navigate("/homepage");
+        navigate("/");
       }
     } catch (error) {
       console.error("Error during registration:", error);

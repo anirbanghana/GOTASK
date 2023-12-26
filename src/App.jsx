@@ -1,72 +1,54 @@
-import "./App.css";
-import Navbar from "./components/Navbar/Navbar";
-import ViewGrid from "./components/Layout/ViewGrid.jsx";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { BrowserRouter } from "react-router-dom";
-import { Routes } from "react-router-dom";
-import { Route } from "react-router-dom";
-import Login from "./components/Login/Login.jsx";
-import Register from "./components/Login/Register.jsx";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import Login from "./components/Login/Login";
+import Register from "./components/Login/Register";
 import Main from "./Main";
 
 function App() {
   const [filterType, setFilterType] = useState("All");
   const [projects, setProjects] = useState([]);
-  const [userId, setUserId] = useState();
+  const [userId, setUserId] = useState(() => {
+    // Fetch userId from local storage if available, else return null
+    return localStorage.getItem("userId") || null;
+  });
 
   useEffect(() => {
-    console.log(userId, "in app");
-    const user = localStorage.getItem("userId");
-    setUserId(user);
-
-    const fetchData = async () => {
-      console.log(userId, "local storage");
-      try {
-        const response = await axios.get(
-          `https://todo-backend-daem.vercel.app/get-all-todos/${userId}`
-        );
-
-        setProjects(response.data.todo);
-        // console.log("this is in the app side",response.data.todo);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-    fetchData();
+    if (userId) {
+      // Fetch user data when userId exists
+      const fetchData = async () => {
+        try {
+          const response = await axios.get(
+            `https://todo-backend-daem.vercel.app/get-all-todos/${userId}`
+          );
+          setProjects(response.data.todo);
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      };
+      fetchData();
+    }
   }, [userId]);
 
   return (
-    // <>
-    //   <Navbar
-    //     filterType={filterType}
-    //     setFilterType={setFilterType}
-    //     projects={projects}
-    //     setProjects={setProjects}
-    //   />
-    //   <ViewGrid
-    //     projects={projects}
-    //     setProjects={setProjects}
-    //     filterType={filterType}
-    //   />
-    // </>
-
     <BrowserRouter>
       <Routes>
+        {/* If userId exists, redirect to the homepage, else redirect to login */}
         <Route
           path="/"
-          element={<Login userId={userId} setUserId={setUserId} />}
-        />
-        <Route
-          path="/homepage"
           element={
-            <Main
-              projects={projects}
-              setProjects={setProjects}
-              userId={userId}
-            />
+            userId ? (
+              <Main
+                projects={projects}
+                setProjects={setProjects}
+                userId={userId}
+              />
+            ) : (
+              <Navigate to="/login" />
+            )
           }
         />
+        <Route path="/login" element={<Login setUserId={setUserId} />} />
         <Route path="/register" element={<Register />} />
       </Routes>
     </BrowserRouter>
@@ -74,6 +56,3 @@ function App() {
 }
 
 export default App;
-{
-  /*  */
-}

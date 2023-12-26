@@ -116,6 +116,7 @@ const Login = ({ onRegisterClick, userId, setUserId }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(formData.email, formData.password);
+
     try {
       const response = await axios.post(
         "https://todo-backend-daem.vercel.app/login",
@@ -135,7 +136,7 @@ const Login = ({ onRegisterClick, userId, setUserId }) => {
         const user = localStorage.getItem("userId");
         // console.log(user, "uring login");
         setUserId(user);
-        navigate("/homepage");
+        navigate("/");
       } else {
         console.error("Login failed");
       }

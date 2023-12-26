@@ -120,7 +120,7 @@ const Register = ({ onLoginClick }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // console.log(formData?.email, formData?.fullname, formData?.password);
+    console.log(formData?.email, formData?.fullname, formData?.password);
     try {
       const response = await axios.post(
         "https://todo-backend-daem.vercel.app/register",

@@ -96,7 +96,7 @@ const ProfileComponent = ({ user, onSignOut }) => {
     // setSignOutModalVisible(false);
     localStorage.removeItem("isAuthenticated");
     localStorage.removeItem("userId");
-    navigate("/");
+    navigate("/login");
 
     // Redirect to the login page
     // Example: window.location.href = '/login';

@@ -9,13 +9,12 @@ function App() {
   const [filterType, setFilterType] = useState("All");
   const [projects, setProjects] = useState([]);
   const [userId, setUserId] = useState(() => {
-    // Fetch userId from local storage if available, else return null
     return localStorage.getItem("userId") || null;
   });
 
   useEffect(() => {
+    console.log(userId, "userid");
     if (userId) {
-      // Fetch user data when userId exists
       const fetchData = async () => {
         try {
           const response = await axios.get(
@@ -33,7 +32,6 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* If userId exists, redirect to the homepage, else redirect to login */}
         <Route
           path="/"
           element={

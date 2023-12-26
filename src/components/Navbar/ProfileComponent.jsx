@@ -94,7 +94,7 @@ const ProfileComponent = ({ user, onSignOut }) => {
 
     // Close the sign-out modal
     // setSignOutModalVisible(false);
-    localStorage.removeItem("isAuthenticated");
+    // localStorage.removeItem("isAuthenticated");
     localStorage.removeItem("userId");
     navigate("/login");
 

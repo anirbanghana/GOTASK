@@ -9,7 +9,6 @@ import ClickAblesOpt from "../options/ClickAblesOpt";
 import { useRef } from "react";
 import Edit from "../NewProject/Edit";
 import Modal from "../../common/ui/Modal";
-import { LocalConvenienceStoreOutlined } from "@mui/icons-material";
 
 const Wrapper = styled(FlexBox)`
   flex-direction: column;
@@ -20,16 +19,18 @@ const Wrapper = styled(FlexBox)`
   row-gap: 1rem;
   min-width: 23rem;
   max-width: 30rem;
-  position: relative;
-
+  height: 30rem;
+  // position: relative;
+  z-index: 1;
   @media (max-width: 768px) {
     width: 100%;
     min-width: 20rem;
+    z-index: 1;
   }
 `;
 const OptionBox = styled(FlexBox)`
   position: absolute;
-  top: 20%;
+  top: 25%;
   right: 1.875rem;
   width: 6rem;
   // padding: 1rem;
@@ -41,8 +42,12 @@ const ListWrapper = styled(FlexBox)`
   flex-direction: column;
   row-gap: 0.5rem;
   overflow-y: auto;
-  padding-bottom: 1rem;
-  max-height: 20rem;
+  padding-bottom: 3rem;
+  // background-color: red;
+  // max-height: 40rem;
+  height: 100%;
+  position: relative;
+  z-index: 1;
 `;
 
 const HeadBox = styled(FlexBox)`
@@ -196,7 +201,9 @@ const ProjectCard = ({ filterType, userId, projects, setProjects, today }) => {
             userId: newProject.userId,
             todoId: projectId,
             name: inputTexts[projectId],
-            Date: new Date().toLocaleString(),
+            Date: today
+              ? currentDate.toLocaleString()
+              : tomorrowDate.toLocaleString(),
           }
         );
         const updatedProjects = projects.map((project) => {
@@ -320,25 +327,22 @@ const ProjectCard = ({ filterType, userId, projects, setProjects, today }) => {
 
   const todayTomorrow = (task) => {
     const dateToCompare = today ? currentDate : tomorrowDate;
-    const dateString = task.Date;
+    const dateString = task?.Date;
+    console.log(currentDate.toLocaleString(), tomorrowDate.toLocaleString());
+    const dateParts = dateString?.split("/");
+    if (dateParts) {
+      const day = parseInt(dateParts[0], 10);
+      const month = parseInt(dateParts[1], 10);
+      const year = parseInt(dateParts[2], 10);
 
-    const dateParts = dateString.split("/");
-    const day = parseInt(dateParts[0], 10);
-    const month = parseInt(dateParts[1], 10);
-    const year = parseInt(dateParts[2], 10);
-    console.log(
-      day,
-      month,
-      year,
-      dateToCompare.getFullYear(),
-      dateToCompare.getMonth() + 1,
-      dateToCompare.getDate()
-    );
-    return (
-      year === dateToCompare.getFullYear() &&
-      month === dateToCompare.getMonth() + 1 &&
-      day === dateToCompare.getDate()
-    );
+      return (
+        year === dateToCompare.getFullYear() &&
+        month === dateToCompare.getMonth() + 1 &&
+        day === dateToCompare.getDate()
+      );
+    } else {
+      return false;
+    }
   };
 
   return (
@@ -421,8 +425,8 @@ const ProjectCard = ({ filterType, userId, projects, setProjects, today }) => {
               ?.map((task, index) => (
                 <SingleTask
                   key={task._id}
-                  index={task._id}
                   text={task.name}
+                  today={today}
                   setEditId={setEditId}
                   editId={editId}
                   isChecked={task.isChecked}

@@ -10,17 +10,21 @@ const Wrapper = styled(FlexBox)`
   border-radius: 0.5rem;
   row-gap: 0.5rem;
   border: 1px solid black;
-  z-index: 5;
+  z-index: 10;
+  height: 100%;
 `;
 
 const Option = styled(FlexBox)``;
 
-const ClickAblesOpt = ({ onHighlightClick, data, projectClick }) => {
-  console.log(data);
+const ClickAblesOpt = ({ onHighlightClick, data, projectClick, today }) => {
+  // Filter the data list based on the today prop
+  const filteredData = today
+    ? data
+    : data.filter((item) => item !== "Move to Tomorrow");
 
   return (
     <Wrapper column>
-      {data.map((item, index) => {
+      {filteredData.map((item, index) => {
         return (
           <Option key={index}>
             <Body2 onClick={() => projectClick(item)}>{item}</Body2>

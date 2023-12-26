@@ -30,10 +30,10 @@ const CRUDbox = styled(FlexBox)`
 
 const OptionBox = styled(FlexBox)`
   position: absolute;
-  top: 50%;
+  top: 60%;
   left: 50%;
 
-  z-index: 1;
+  z-index: 10;
   cursor: pointer;
   /* Add styling for the OptionBox component */
 `;
@@ -58,6 +58,7 @@ const SingleTask = ({
   setEditId,
   index,
   moveTomorrow,
+  today,
 }) => {
   const [isHighlighted, setHighlighted] = useState(false);
   const [optionOpen, setOptionOpen] = useState(false);
@@ -67,7 +68,7 @@ const SingleTask = ({
   const data = ["Move to Tomorrow", "Highlights", "Edit", "Delete"];
 
   const handleCheckboxChange = () => {
-    setTaskStatus(); // Update the task's isChecked status
+    setTaskStatus();
   };
 
   const handleOptionIconClick = () => {
@@ -91,25 +92,21 @@ const SingleTask = ({
     }
     setOptionOpen(false);
   };
-  const handleHighlightClick = () => {
-    // Close the options after clicking "Highlight"
-  };
+  const handleHighlightClick = () => {};
   const handleEditIconClick = () => {
     setOptionOpen(false);
     setIsEditing(true);
   };
   const handleEditInputChange = (e) => {
     setEditedText(e.target.value);
-    // setEditText(editedText);
   };
 
   const handleEditTask = () => {
-    EditTask(editedText); // Pass the edited text to the EditTask function
+    EditTask(editedText);
     setIsEditing(false);
-    setEditId(null); // Exit editing mode
+    setEditId(null);
   };
   const handleDocumentClick = (e) => {
-    // Close the OptionBox if the click is outside the OptionBox
     if (
       optionOpen &&
       optionRef.current &&
@@ -130,7 +127,7 @@ const SingleTask = ({
   }, [optionOpen]);
   return (
     <Wrapper isHighlighted={isHighlighted}>
-      {isEditing && editId === index ? ( // Display input field when editing
+      {isEditing && editId === index ? (
         <InputBox
           style={{ textDecoration: isChecked ? "line-through" : "none" }}
         >
@@ -138,16 +135,14 @@ const SingleTask = ({
             type="text"
             value={editedText}
             onChange={handleEditInputChange}
-            // onBlur={handleEditTask} // Handle task update on blur (losing focus)
             onKeyDown={(e) => {
               if (e.key === "Enter") {
-                handleEditTask(); // Handle task update on pressing Enter
+                handleEditTask();
               }
             }}
           />
         </InputBox>
       ) : (
-        // Display task text when not editing
         <InputBox
           style={{ textDecoration: isChecked ? "line-through" : "none" }}
         >
@@ -164,6 +159,8 @@ const SingleTask = ({
         {optionOpen && (
           <OptionBox ref={optionRef}>
             <ClickAblesOpt
+              today={today}
+              optionOpen={optionOpen}
               onHighlightClick={handleHighlightClick}
               data={data}
               projectClick={(filter) => projectClick(filter)}

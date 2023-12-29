@@ -14,6 +14,7 @@ const Wrapper = styled(FlexBox)`
   overflow-y: auto;
   position: relative;
   padding: 3rem 0.5rem;
+  z-index: 10;
 `;
 
 const Container = styled(FlexBox)`

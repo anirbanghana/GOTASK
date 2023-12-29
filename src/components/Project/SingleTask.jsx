@@ -59,13 +59,20 @@ const SingleTask = ({
   index,
   moveTomorrow,
   today,
+  moveToday,
 }) => {
   const [isHighlighted, setHighlighted] = useState(false);
   const [optionOpen, setOptionOpen] = useState(false);
   const optionRef = useRef(null);
   const [editedText, setEditedText] = useState(text);
 
-  const data = ["Move to Tomorrow", "Highlights", "Edit", "Delete"];
+  const data = [
+    "Move to Tomorrow",
+    "Highlights",
+    "Edit",
+    "Delete",
+    "Move to Today",
+  ];
 
   const handleCheckboxChange = () => {
     setTaskStatus();
@@ -89,7 +96,7 @@ const SingleTask = ({
       setHighlighted(!isHighlighted);
     } else if (filterType === "Move to Tomorrow") {
       moveTomorrow();
-    }
+    } else if (filterType === "Move to Today") moveToday();
     setOptionOpen(false);
   };
   const handleHighlightClick = () => {};
@@ -125,6 +132,7 @@ const SingleTask = ({
       document.removeEventListener("mousedown", handleDocumentClick);
     };
   }, [optionOpen]);
+  console.log(isEditing, editId, index);
   return (
     <Wrapper isHighlighted={isHighlighted}>
       {isEditing && editId === index ? (

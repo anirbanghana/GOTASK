@@ -241,6 +241,14 @@ const ProjectCard = ({ filterType, userId, projects, setProjects, today }) => {
 
   const currentDate = new Date();
   currentDate.setDate(currentDate.getDate());
+  const dateStringtoday = currentDate;
+  const dateNewtoday = new Date(currentDate);
+  const formattedTodayDate =
+    ("0" + dateNewtoday.getDate()).slice(-2) +
+    "/" +
+    ("0" + (dateNewtoday.getMonth() + 1)).slice(-2) +
+    "/" +
+    dateNewtoday.getFullYear();
   const tomorrowDate = new Date();
   tomorrowDate.setDate(currentDate.getDate() + 1);
   const dateStringNew = tomorrowDate;
@@ -251,6 +259,40 @@ const ProjectCard = ({ filterType, userId, projects, setProjects, today }) => {
     ("0" + (dateNew.getMonth() + 1)).slice(-2) +
     "/" +
     dateNew.getFullYear();
+
+  const handleMoveToday = async (itemId, heading) => {
+    console.log(itemId, heading);
+    console.log(formattedDate);
+    const response = await axios.patch(
+      `https://todo-backend-daem.vercel.app/update-task-by-todo/${itemId}`,
+      {
+        Date: formattedTodayDate,
+      }
+    );
+    console.log(response.data.updatedTask);
+    const updatedTask = response.data.updatedTask;
+    const updatedProjects = projects.map((project) => {
+      if (project.todoName === heading) {
+        const updatedTasks = project.tasks.map((task) => {
+          if (task._id === itemId) {
+            return {
+              ...task,
+              Date: formattedTodayDate,
+            };
+          }
+          return task;
+        });
+
+        return {
+          ...project,
+          tasks: updatedTasks,
+        };
+      }
+      return project;
+    });
+
+    setProjects(updatedProjects);
+  };
 
   const handleMoveTomorrow = async (itemId, heading) => {
     console.log(itemId, heading);
@@ -371,6 +413,7 @@ const ProjectCard = ({ filterType, userId, projects, setProjects, today }) => {
           {modalOpen && (
             <Modal
               M1
+              height="50%"
               children={
                 <Edit
                   userId={userId}
@@ -425,6 +468,7 @@ const ProjectCard = ({ filterType, userId, projects, setProjects, today }) => {
               ?.map((task, index) => (
                 <SingleTask
                   key={task._id}
+                  index={task._id}
                   text={task.name}
                   today={today}
                   setEditId={setEditId}
@@ -446,6 +490,7 @@ const ProjectCard = ({ filterType, userId, projects, setProjects, today }) => {
                   moveTomorrow={() =>
                     handleMoveTomorrow(task._id, item.todoName)
                   }
+                  moveToday={() => handleMoveToday(task._id, item.todoName)}
                   heading={item.todoName}
                   projects={projects}
                   setProjects={setProjects}

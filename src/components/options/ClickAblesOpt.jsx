@@ -19,7 +19,7 @@ const Option = styled(FlexBox)``;
 const ClickAblesOpt = ({ onHighlightClick, data, projectClick, today }) => {
   // Filter the data list based on the today prop
   const filteredData = today
-    ? data
+    ? data.filter((item) => item !== "Move to Today")
     : data.filter((item) => item !== "Move to Tomorrow");
 
   return (

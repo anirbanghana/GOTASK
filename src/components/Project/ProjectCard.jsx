@@ -9,6 +9,7 @@ import ClickAblesOpt from "../options/ClickAblesOpt";
 import { useRef } from "react";
 import Edit from "../NewProject/Edit";
 import Modal from "../../common/ui/Modal";
+import { ConstructionOutlined } from "@mui/icons-material";
 
 const Wrapper = styled(FlexBox)`
   flex-direction: column;
@@ -83,7 +84,15 @@ const EditDeleteContainer = styled(FlexBox)`
   right: 30%;
 `;
 
-const ProjectCard = ({ filterType, userId, projects, setProjects, today }) => {
+const ProjectCard = ({
+  filterType,
+  userId,
+  projects,
+  setProjects,
+  today,
+  setSearchText,
+  searchText,
+}) => {
   const [editDeleteBox, setEditDeleteBox] = useState(false);
   const optionRef = useRef(null);
   const [openedDotIndex, setOpenedDotIndex] = useState(null);
@@ -327,21 +336,83 @@ const ProjectCard = ({ filterType, userId, projects, setProjects, today }) => {
 
     setProjects(updatedProjects);
   };
-  const handleTaskStatusChange = (itemId, heading) => {
-    const updatedProjects = projects?.map((project) => {
+
+  const handleTaskStatusChange = async (itemId, heading) => {
+    console.log(itemId, heading);
+    const newProject = projects.filter(
+      (project) => project.todoName === heading
+    );
+    const task = newProject[0].tasks.filter((task) => task._id === itemId);
+    console.log(task[0].isChecked);
+    const checked = task[0].isChecked;
+    const response = await axios.patch(
+      `https://todo-backend-daem.vercel.app/update-task-by-todo/${itemId}`,
+      {
+        isChecked: !task[0].isChecked,
+      }
+    );
+    console.log(response.data.updatedTask);
+    const updatedTask = response.data.updatedTask;
+    const updatedProjects = projects.map((project) => {
       if (project.todoName === heading) {
         const updatedTasks = project.tasks.map((task) => {
           if (task._id === itemId) {
-            return { ...task, isChecked: !task.isChecked };
+            return {
+              ...task,
+              isChecked: updatedTask.isChecked,
+            };
           }
           return task;
         });
-        return { ...project, tasks: updatedTasks };
+
+        return {
+          ...project,
+          tasks: updatedTasks,
+        };
       }
       return project;
     });
+
     setProjects(updatedProjects);
   };
+  const handleTaskHighlightChange = async (itemId, heading) => {
+    console.log(itemId, heading);
+    const newProject = projects.filter(
+      (project) => project.todoName === heading
+    );
+    const task = newProject[0].tasks.filter((task) => task._id === itemId);
+    console.log(task[0].ishighlight, "highlight");
+    const response = await axios.patch(
+      `https://todo-backend-daem.vercel.app/update-task-by-todo/${itemId}`,
+      {
+        ishighlight: !task[0].ishighlight,
+      }
+    );
+    console.log(response.data.updatedTask);
+    const updatedTask = response.data.updatedTask;
+    const updatedProjects = projects.map((project) => {
+      if (project.todoName === heading) {
+        const updatedTasks = project.tasks.map((task) => {
+          if (task._id === itemId) {
+            return {
+              ...task,
+              ishighlight: updatedTask.ishighlight,
+            };
+          }
+          return task;
+        });
+
+        return {
+          ...project,
+          tasks: updatedTasks,
+        };
+      }
+      return project;
+    });
+
+    setProjects(updatedProjects);
+  };
+
   const openModal = () => {
     setmodalOpen(true);
   };
@@ -350,22 +421,31 @@ const ProjectCard = ({ filterType, userId, projects, setProjects, today }) => {
     setmodalOpen(false);
   };
 
-  const handleTaskHighlightChange = (itemId, heading) => {
-    const updatedProjects = projects?.map((project) => {
-      if (project.todoName === heading) {
-        const updatedTasks = project.tasks.map((task) => {
-          if (task._id === itemId) {
-            return { ...task, ishighlight: !task.ishighlight };
-          }
-          return task;
-        });
-        return { ...project, tasks: updatedTasks };
-      }
-      return project;
-    });
-    setProjects(updatedProjects);
-    console.log(projects);
-  };
+  // const handleTaskHighlightChange = (itemId, heading) => {
+  //   const updatedProjectsCopy = [...projects]; // Copy the projects array
+
+  //   // console.log("Original projects:", projects);
+
+  //   const projectToUpdate = updatedProjectsCopy.find(
+  //     (project) => project.todoName === heading
+  //   );
+
+  //   // console.log("Project to update:", projectToUpdate);
+
+  //   if (projectToUpdate) {
+  //     const updatedTasks = projectToUpdate.tasks.map((task) => {
+  //       if (task._id === itemId) {
+  //         return { ...task, ishighlight: !task.ishighlight };
+  //       }
+  //       return task;
+  //     });
+
+  //     // console.log("Updated tasks:", updatedTasks);
+
+  //     projectToUpdate.tasks = updatedTasks; // Update tasks for the found project
+  //     setProjects(updatedProjectsCopy); // Set the updated projects array
+  //   }
+  // };
 
   const todayTomorrow = (task) => {
     const dateToCompare = today ? currentDate : tomorrowDate;
@@ -385,6 +465,13 @@ const ProjectCard = ({ filterType, userId, projects, setProjects, today }) => {
     } else {
       return false;
     }
+  };
+
+  const searchItem = (task) => {
+    if (searchText) {
+      return task.name.toLowerCase().includes(searchText.toLowerCase());
+    }
+    return true;
   };
 
   return (
@@ -455,14 +542,18 @@ const ProjectCard = ({ filterType, userId, projects, setProjects, today }) => {
             {item.tasks
               ?.filter((task) => {
                 if (filterType === "Complete") {
-                  return task.isChecked && todayTomorrow(task);
+                  return (
+                    task.isChecked && todayTomorrow(task) && searchItem(task)
+                  );
                   // return task.isChecked;
                 } else if (filterType === "Outstanding") {
-                  return task.ishighlight && todayTomorrow(task);
+                  return (
+                    task.ishighlight && todayTomorrow(task) && searchItem(task)
+                  );
                   // return task.ishighlight;
                 }
 
-                return todayTomorrow(task);
+                return todayTomorrow(task) && searchItem(task);
                 // return task;
               })
               ?.map((task, index) => (

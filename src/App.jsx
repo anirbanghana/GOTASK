@@ -8,6 +8,7 @@ import Main from "./Main";
 function App() {
   const [filterType, setFilterType] = useState("All");
   const [projects, setProjects] = useState([]);
+  const [searchText, setSearchText] = useState("");
   const [userId, setUserId] = useState(() => {
     return localStorage.getItem("userId") || null;
   });
@@ -40,6 +41,8 @@ function App() {
                 projects={projects}
                 setProjects={setProjects}
                 userId={userId}
+                searchText={searchText}
+                setSearchText={setSearchText}
               />
             ) : (
               <Navigate to="/login" />

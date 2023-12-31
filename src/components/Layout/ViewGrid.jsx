@@ -8,6 +8,7 @@ import axios from "axios";
 const Wrapper = styled(FlexBox)`
   padding: 1rem 1rem 2rem 2rem;
   row-gap: 2rem;
+  z-index: 1;
 `;
 
 const FlexScroll = styled(FlexBox)`
@@ -19,7 +20,6 @@ const FlexScroll = styled(FlexBox)`
   overflow-x: auto;
   scrollbar-width: none;
   -ms-overflow-style: none;
-
   &::-webkit-scrollbar {
     display: none;
   }
@@ -38,46 +38,15 @@ const HrBox = styled(FlexBox)`
   background-color: #e1e1e1;
 `;
 
-const dummydata = [
-  {
-    projectName: "work",
-    id: 1,
-    tasks: [
-      {
-        id: "a1",
-        taskname: "buy apple",
-      },
-      {
-        id: "a2",
-        taskname: "buy banan",
-      },
-      {
-        id: "a3",
-        taskname: "buy cat",
-      },
-    ],
-  },
-  {
-    projectName: "personal",
-    id: 2,
-    tasks: [
-      {
-        id: "a1",
-        taskname: "eat apple",
-      },
-      {
-        id: "a2",
-        taskname: "eat banan",
-      },
-      {
-        id: "a3",
-        taskname: " cat farming",
-      },
-    ],
-  },
-];
-
-const ViewGrid = ({ projects, setProjects, filterType, heading, userId }) => {
+const ViewGrid = ({
+  projects,
+  setProjects,
+  filterType,
+  heading,
+  userId,
+  searchText,
+  setSearchText,
+}) => {
   const [data, setData] = useState([]);
   const url = "https://todo-backend-daem.vercel.app/get-all-todos";
   console.log(filterType, "Inside the grid view");
@@ -108,6 +77,8 @@ const ViewGrid = ({ projects, setProjects, filterType, heading, userId }) => {
             projects={projects}
             userId={userId}
             setProjects={setProjects}
+            searchText={searchText}
+            setSearchText={setSearchText}
           />
         </FlexScroll>
       </FlexBox>
@@ -124,8 +95,9 @@ const ViewGrid = ({ projects, setProjects, filterType, heading, userId }) => {
             filterType={filterType}
             projects={projects}
             today={false}
-            // tasks={tomorrowTasks}
             setProjects={setProjects}
+            searchText={searchText}
+            setSearchText={setSearchText}
           />
         </FlexScroll>
       </FlexBox>

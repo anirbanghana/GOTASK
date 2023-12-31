@@ -59,6 +59,8 @@ const Navbar = ({
   projects,
   setProjects,
   userId,
+  searchText,
+  setSearchText,
 }) => {
   const [open, setOpen] = useState(false);
   const [close, setClose] = useState(true);
@@ -68,7 +70,12 @@ const Navbar = ({
       <Logo>
         <img src={goTaskimg} alt="GoTask" width="90px" />
       </Logo>
-      <SearchBox filterType={filterType} setFilterType={setFilterType} />
+      <SearchBox
+        filterType={filterType}
+        setFilterType={setFilterType}
+        searchText={searchText}
+        setSearchText={setSearchText}
+      />
 
       <ProfileBox>
         <NewProjectButton

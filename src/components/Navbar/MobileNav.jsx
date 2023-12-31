@@ -7,7 +7,7 @@ import { useEffect } from "react";
 const Wrapper = styled(FlexBox)`
   width: 100%;
   height: 100%;
-  background-color: red;
+  background-color: white;
   z-index: 2;
   position: absolute;
   flex-direction: column;

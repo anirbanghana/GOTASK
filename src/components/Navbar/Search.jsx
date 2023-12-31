@@ -42,9 +42,10 @@ const Input = styled.input`
 const SearchBox = ({
   filterType,
   setFilterType,
-  searchItem,
-  setSearchItem,
+  searchText,
+  setSearchText,
 }) => {
+  console.log(searchText);
   return (
     <Wrapper>
       <SearchBoxW>
@@ -52,8 +53,8 @@ const SearchBox = ({
         <Input
           type="text"
           placeholder="Search"
-          value={searchItem}
-          onChange={(e) => setSearchItem(e.target.value)}
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
         />
       </SearchBoxW>
       <Filter filterType={filterType} setFilterType={setFilterType} />

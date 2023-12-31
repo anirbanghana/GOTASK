@@ -5,13 +5,12 @@ import { Body2 } from "../../common/ui/Headings";
 const Wrapper = styled(FlexBox)`
   padding: 1.5rem;
   width: 10rem;
-  background-color: white;
+  background-color: black;
   box-shadow: 5px 5px 5px 0px rgba(0, 0, 0, 0.1);
   border-radius: 0.5rem;
   row-gap: 0.5rem;
   border: 1px solid black;
   z-index: 10;
-  height: 100%;
 `;
 
 const Option = styled(FlexBox)``;

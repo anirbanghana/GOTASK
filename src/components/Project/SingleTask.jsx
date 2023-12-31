@@ -9,10 +9,8 @@ const Wrapper = styled(FlexBox)`
   border-radius: 0.5rem;
   justify-content: space-between;
   align-items: center;
-  background-color: ${({ isHighlighted }) =>
-    isHighlighted ? "#E1F1FF" : "white"};
-  border: ${({ isHighlighted }) =>
-    isHighlighted ? "2px solid #007BFF" : "none"};
+  background-color: ${({ highlighted }) => (highlighted ? "#E1F1FF" : "white")};
+  border: ${({ highlighted }) => (highlighted ? "2px solid #007BFF" : "none")};
   box-shadow: 0px 5px 5px -2px rgba(0, 0, 0, 0.1);
   padding: 1rem;
   position: relative;
@@ -48,6 +46,7 @@ const SingleTask = ({
   isChecked,
   setTaskStatus,
   setTaskHighlight,
+  isHighlighted,
   heading,
   EditTask,
   DeleteTask,
@@ -61,7 +60,7 @@ const SingleTask = ({
   today,
   moveToday,
 }) => {
-  const [isHighlighted, setHighlighted] = useState(false);
+  // const [isHighlighted, setHighlighted] = useState(false);
   const [optionOpen, setOptionOpen] = useState(false);
   const optionRef = useRef(null);
   const [editedText, setEditedText] = useState(text);
@@ -91,9 +90,8 @@ const SingleTask = ({
     } else if (filterType === "Delete") {
       DeleteTask();
     } else if (filterType === "Highlights") {
-      console.log("highlight is clicked");
+      console.log("highlight is clicked", isHighlighted);
       setTaskHighlight();
-      setHighlighted(!isHighlighted);
     } else if (filterType === "Move to Tomorrow") {
       moveTomorrow();
     } else if (filterType === "Move to Today") moveToday();
@@ -134,7 +132,7 @@ const SingleTask = ({
   }, [optionOpen]);
   console.log(isEditing, editId, index);
   return (
-    <Wrapper isHighlighted={isHighlighted}>
+    <Wrapper highlighted={isHighlighted}>
       {isEditing && editId === index ? (
         <InputBox
           style={{ textDecoration: isChecked ? "line-through" : "none" }}
@@ -169,7 +167,7 @@ const SingleTask = ({
             <ClickAblesOpt
               today={today}
               optionOpen={optionOpen}
-              onHighlightClick={handleHighlightClick}
+              // onHighlightClick={handleHighlightClick}
               data={data}
               projectClick={(filter) => projectClick(filter)}
             />

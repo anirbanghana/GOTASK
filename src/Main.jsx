@@ -5,7 +5,7 @@ import ViewGrid from "./components/Layout/ViewGrid.jsx";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-function Main({ projects, setProjects, userId }) {
+function Main({ projects, setProjects, userId, searchText, setSearchText }) {
   const [filterType, setFilterType] = useState("All");
 
   return (
@@ -16,12 +16,15 @@ function Main({ projects, setProjects, userId }) {
         projects={projects}
         userId={userId}
         setProjects={setProjects}
+        searchText={searchText}
+        setSearchText={setSearchText}
       />
       <ViewGrid
         projects={projects}
         setProjects={setProjects}
         filterType={filterType}
         userId={userId}
+        searchText={searchText}
       />
     </>
   );

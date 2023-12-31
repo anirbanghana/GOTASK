@@ -5,7 +5,7 @@ import { Body2 } from "../../common/ui/Headings";
 const Wrapper = styled(FlexBox)`
   padding: 1.5rem;
   width: 10rem;
-  background-color: black;
+  background-color: white;
   box-shadow: 5px 5px 5px 0px rgba(0, 0, 0, 0.1);
   border-radius: 0.5rem;
   row-gap: 0.5rem;

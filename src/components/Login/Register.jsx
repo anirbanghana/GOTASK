@@ -146,7 +146,7 @@ const Register = ({ onLoginClick }) => {
   return (
     <Wrapper>
       <Logo>
-        <img src={goTaskimg} alt="GoTask" />
+        <img src={goTaskimg} alt="GoTask" width="100px" />
       </Logo>
       <Container>
         <Form onSubmit={handleSubmit}>

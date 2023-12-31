@@ -148,7 +148,7 @@ const Login = ({ onRegisterClick, userId, setUserId }) => {
   return (
     <Wrapper column>
       <Logo>
-        <img src={goTaskimg} alt="GoTask" />
+        <img src={goTaskimg} alt="GoTask" width="150px" />
       </Logo>
       <Container>
         <Form onSubmit={handleSubmit}>

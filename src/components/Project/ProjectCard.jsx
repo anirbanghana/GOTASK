@@ -84,6 +84,16 @@ const EditDeleteContainer = styled(FlexBox)`
   right: 30%;
 `;
 
+const NewOptionBox = styled(FlexBox)`
+  position: absolute;
+  top: 60%;
+  left: 50%;
+
+  z-index: 10;
+  cursor: pointer;
+  /* Add styling for the OptionBox component */
+`;
+
 const ProjectCard = ({
   filterType,
   userId,
@@ -102,7 +112,8 @@ const ProjectCard = ({
   const [selectedProject, setSelectedProject] = useState("");
   const [inputTexts, setInputTexts] = useState({});
   const [isEditing, setIsEditing] = useState(false);
-
+  const [optionOpen, setOptionOpen] = useState(false);
+  const divRef = useRef(null);
   const projectClick = (id, filter) => {
     const project = projects.filter((project) => project._id === id);
     if (filter === "Edit") {
@@ -270,12 +281,10 @@ const ProjectCard = ({
     dateNew.getFullYear();
 
   const handleMoveToday = async (itemId, heading) => {
-    console.log(itemId, heading);
-    console.log(formattedDate);
     const response = await axios.patch(
       `https://todo-backend-daem.vercel.app/update-task-by-todo/${itemId}`,
       {
-        Date: formattedTodayDate,
+        isToday: true,
       }
     );
     console.log(response.data.updatedTask);
@@ -286,7 +295,7 @@ const ProjectCard = ({
           if (task._id === itemId) {
             return {
               ...task,
-              Date: formattedTodayDate,
+              isToday: true,
             };
           }
           return task;
@@ -305,11 +314,11 @@ const ProjectCard = ({
 
   const handleMoveTomorrow = async (itemId, heading) => {
     console.log(itemId, heading);
-    console.log(formattedDate);
+
     const response = await axios.patch(
       `https://todo-backend-daem.vercel.app/update-task-by-todo/${itemId}`,
       {
-        Date: formattedDate,
+        isToday: false,
       }
     );
     console.log(response.data.updatedTask);
@@ -320,7 +329,7 @@ const ProjectCard = ({
           if (task._id === itemId) {
             return {
               ...task,
-              Date: formattedDate,
+              isToday: false,
             };
           }
           return task;
@@ -421,57 +430,32 @@ const ProjectCard = ({
     setmodalOpen(false);
   };
 
-  // const handleTaskHighlightChange = (itemId, heading) => {
-  //   const updatedProjectsCopy = [...projects]; // Copy the projects array
-
-  //   // console.log("Original projects:", projects);
-
-  //   const projectToUpdate = updatedProjectsCopy.find(
-  //     (project) => project.todoName === heading
-  //   );
-
-  //   // console.log("Project to update:", projectToUpdate);
-
-  //   if (projectToUpdate) {
-  //     const updatedTasks = projectToUpdate.tasks.map((task) => {
-  //       if (task._id === itemId) {
-  //         return { ...task, ishighlight: !task.ishighlight };
-  //       }
-  //       return task;
-  //     });
-
-  //     // console.log("Updated tasks:", updatedTasks);
-
-  //     projectToUpdate.tasks = updatedTasks; // Update tasks for the found project
-  //     setProjects(updatedProjectsCopy); // Set the updated projects array
-  //   }
-  // };
-
   const todayTomorrow = (task) => {
-    const dateToCompare = today ? currentDate : tomorrowDate;
-    const dateString = task?.Date;
-    console.log(currentDate.toLocaleString(), tomorrowDate.toLocaleString());
-    const dateParts = dateString?.split("/");
-    if (dateParts) {
-      const day = parseInt(dateParts[0], 10);
-      const month = parseInt(dateParts[1], 10);
-      const year = parseInt(dateParts[2], 10);
-
-      return (
-        year === dateToCompare.getFullYear() &&
-        month === dateToCompare.getMonth() + 1 &&
-        day === dateToCompare.getDate()
-      );
-    } else {
-      return false;
-    }
+    console.log(task.isToday);
+    if (today) {
+      return task.isToday;
+    } else return !task.isToday;
   };
 
   const searchItem = (task) => {
     if (searchText) {
-      return task.name.toLowerCase().includes(searchText.toLowerCase());
+      if (task.name && typeof task.name === "string") {
+        return task.name.toLowerCase().includes(searchText.toLowerCase());
+      }
     }
     return true;
+  };
+
+  const handleTarget = (event) => {
+    // console.log(event.target.getBoundingClientRect().left, "left");
+    // console.log(event.currentTarget.getBoundingClientRect().left, "left");
+    console.log(
+      event,
+      divRef.current.getBoundingClientRect().bottom,
+      "inner div"
+    );
+    // console.log(event.target.getBoundingClientRect().bottom, "main Div ");
+    console.log(event.screenY, "main Div ");
   };
 
   return (
@@ -543,29 +527,29 @@ const ProjectCard = ({
               ?.filter((task) => {
                 if (filterType === "Complete") {
                   return (
-                    task.isChecked && todayTomorrow(task) && searchItem(task)
+                    task.isChecked && searchItem(task) && todayTomorrow(task)
                   );
-                  // return task.isChecked;
                 } else if (filterType === "Outstanding") {
                   return (
-                    task.ishighlight && todayTomorrow(task) && searchItem(task)
+                    task.ishighlight && searchItem(task) && todayTomorrow(task)
                   );
-                  // return task.ishighlight;
                 }
 
-                return todayTomorrow(task) && searchItem(task);
-                // return task;
+                return searchItem(task) && todayTomorrow(task);
               })
               ?.map((task, index) => (
                 <SingleTask
                   key={task._id}
                   index={task._id}
                   text={task.name}
+                  optionOpen={optionOpen}
+                  setOptionOpen={setOptionOpen}
                   today={today}
                   setEditId={setEditId}
                   editId={editId}
                   isChecked={task.isChecked}
                   isHighlighted={task.ishighlight}
+                  divRef={divRef}
                   isEditing={isEditing}
                   setIsEditing={setIsEditing}
                   setTaskStatus={() =>

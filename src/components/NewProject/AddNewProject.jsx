@@ -32,6 +32,7 @@ const FormGroup = styled(FlexBox)`
 
 const Label = styled.label`
   display: block;
+  width: 7rem;
 `;
 
 const Input = styled.input`
@@ -108,7 +109,7 @@ const AddNewProject = ({ close, projects, setProjects, userId }) => {
       <Close onClick={handleClose} />
       <Container column>
         <FormGroup>
-          <Label>Title</Label>
+          <Label>List Name:</Label>
           <Input
             type="text"
             name="title"

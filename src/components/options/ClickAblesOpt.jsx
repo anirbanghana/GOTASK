@@ -15,7 +15,7 @@ const Wrapper = styled(FlexBox)`
 
 const Option = styled(FlexBox)``;
 
-const ClickAblesOpt = ({ onHighlightClick, data, projectClick, today }) => {
+const ClickAblesOpt = ({ data, projectClick, today }) => {
   // Filter the data list based on the today prop
   const filteredData = today
     ? data.filter((item) => item !== "Move to Today")

@@ -4,6 +4,7 @@ import ClickAblesOpt from "../options/ClickAblesOpt";
 import styled from "@emotion/styled";
 import FlexBox from "../../common/ui/FlexBox";
 import axios from "axios";
+import Menus from "../Menus";
 
 const Wrapper = styled(FlexBox)`
   border-radius: 0.5rem;
@@ -59,11 +60,14 @@ const SingleTask = ({
   moveTomorrow,
   today,
   moveToday,
+  divRef,
 }) => {
   // const [isHighlighted, setHighlighted] = useState(false);
   const [optionOpen, setOptionOpen] = useState(false);
-  const optionRef = useRef(null);
+
   const [editedText, setEditedText] = useState(text);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const optionRef = useRef(null);
 
   const data = [
     "Move to Tomorrow",
@@ -77,9 +81,12 @@ const SingleTask = ({
     setTaskStatus();
   };
 
-  const handleOptionIconClick = () => {
+  const handleOptionIconClick = (e) => {
     setOptionOpen(!optionOpen);
-    console.log(optionOpen);
+    console.log(e, "even");
+    // console.log(event, "event clicked");
+    setAnchorEl(event.currentTarget);
+    console.log(optionOpen, "option open");
   };
   const projectClick = (filterType) => {
     if (filterType === "Edit") {
@@ -130,7 +137,8 @@ const SingleTask = ({
       document.removeEventListener("mousedown", handleDocumentClick);
     };
   }, [optionOpen]);
-  console.log(isEditing, editId, index);
+  // console.log(ref,"ref ")
+
   return (
     <Wrapper highlighted={isHighlighted}>
       {isEditing && editId === index ? (
@@ -162,12 +170,13 @@ const SingleTask = ({
       )}
       <CRUDbox>
         <MoreHorizOutlinedIcon onClick={handleOptionIconClick} />
+
         {optionOpen && (
           <OptionBox ref={optionRef}>
             <ClickAblesOpt
               today={today}
               optionOpen={optionOpen}
-              // onHighlightClick={handleHighlightClick}
+              optionRef={optionRef}
               data={data}
               projectClick={(filter) => projectClick(filter)}
             />

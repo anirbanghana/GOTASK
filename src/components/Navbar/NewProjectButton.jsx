@@ -19,7 +19,7 @@ const NewProjectButton = ({ projects, setProjects, userId }) => {
     <>
       <FlexBox onClick={openModal}>
         <Button disableElevation="true" variant="contained">
-          + ‎ ADD NEW PROJECT
+          + ‎ ADD NEW LIST
         </Button>
       </FlexBox>
       {modalOpen && (

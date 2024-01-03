@@ -531,7 +531,7 @@ const ProjectCard = ({
                   );
                 } else if (filterType === "Outstanding") {
                   return (
-                    task.ishighlight && searchItem(task) && todayTomorrow(task)
+                    !task.isChecked && searchItem(task) && todayTomorrow(task)
                   );
                 }
 

@@ -29,13 +29,14 @@ const CRUDbox = styled(FlexBox)`
 
 const OptionBox = styled(FlexBox)`
   position: absolute;
-  top: 60%;
+  top: ${({ change }) => (change ? "-10rem" : "60%")};
   left: 50%;
 
   z-index: 10;
   cursor: pointer;
   /* Add styling for the OptionBox component */
 `;
+
 const TaskBox = styled(FlexBox)`
   background-color: white;
   border: 1px solid black;
@@ -68,6 +69,13 @@ const SingleTask = ({
   const [editedText, setEditedText] = useState(text);
   const [anchorEl, setAnchorEl] = useState(null);
   const optionRef = useRef(null);
+  const [change, setChange] = useState(false);
+  const [parentElement, setParentElement] = useState(null);
+  const [element, setElement] = useState(null);
+  const [spaceAboveNew, setSpaceAbove] = useState(0);
+  const [spaceBelowNew, setSpaceBelow] = useState(0);
+  const [optionTop, setOptionTop] = useState(0);
+  // let parentElement = 5;
 
   const data = [
     "Move to Tomorrow",
@@ -81,13 +89,51 @@ const SingleTask = ({
     setTaskStatus();
   };
 
-  const handleOptionIconClick = (e) => {
-    setOptionOpen(!optionOpen);
-    console.log(e, "even");
-    // console.log(event, "event clicked");
-    setAnchorEl(event.currentTarget);
-    console.log(optionOpen, "option open");
+  const calculateDistanceToBottom = () => {
+    const parentContainer = element?.parentElement;
+    const taskRect = parentElement?.getBoundingClientRect();
+    const parentRect = parentContainer?.getBoundingClientRect();
+    console.log(parentContainer, "option ref");
+    console.log(taskRect, "task Rect");
+
+    if (!parentRect || !taskRect) {
+      return null;
+    }
+
+    const spaceBelow = parentRect.bottom - taskRect.top;
+    const spaceAbove = taskRect.bottom - parentRect.top;
+
+    return { spaceBelow, spaceAbove };
   };
+
+  const handleOptionIconClick = () => {
+    const distances = calculateDistanceToBottom();
+    console.log(distances, "distance");
+
+    if (!distances) {
+      setOptionOpen(true);
+      return;
+    }
+
+    const { spaceBelow, spaceAbove } = distances;
+
+    if (spaceAbove - spaceBelow > 50) {
+      // setChange(true);
+      setChange((prevChange) => {
+        if (!prevChange) {
+          setOptionOpen(true);
+        }
+        return true;
+      });
+      console.log(change, "change"); // Create a state variable and update its value here
+    } else {
+      setOptionOpen(true);
+    }
+  };
+  useEffect(() => {
+    console.log("Change value after update:", change);
+  }, [change]);
+
   const projectClick = (filterType) => {
     if (filterType === "Edit") {
       handleEditIconClick();
@@ -125,11 +171,10 @@ const SingleTask = ({
       !optionRef.current.contains(e.target)
     ) {
       setOptionOpen(false);
+      // setParentElement(null);
     }
   };
-  const filteredTasks = projects.filter(
-    (project) => project.todoName === heading
-  );
+
   useEffect(() => {
     document.addEventListener("mousedown", handleDocumentClick);
 
@@ -137,10 +182,14 @@ const SingleTask = ({
       document.removeEventListener("mousedown", handleDocumentClick);
     };
   }, [optionOpen]);
-  // console.log(ref,"ref ")
+  useEffect(() => {
+    setParentElement(optionRef.current);
+    setElement(optionRef.current);
+    console.log(parentElement, "parentElements");
+  }, [element]);
 
   return (
-    <Wrapper highlighted={isHighlighted}>
+    <Wrapper highlighted={isHighlighted} ref={optionRef}>
       {isEditing && editId === index ? (
         <InputBox
           style={{ textDecoration: isChecked ? "line-through" : "none" }}
@@ -172,11 +221,11 @@ const SingleTask = ({
         <MoreHorizOutlinedIcon onClick={handleOptionIconClick} />
 
         {optionOpen && (
-          <OptionBox ref={optionRef}>
+          <OptionBox change={change} ref={optionRef} id="dot-container">
             <ClickAblesOpt
               today={today}
               optionOpen={optionOpen}
-              optionRef={optionRef}
+              // optionRef={optionRef}
               data={data}
               projectClick={(filter) => projectClick(filter)}
             />

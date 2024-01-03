@@ -5,6 +5,7 @@ import styled from "@emotion/styled";
 import FlexBox from "../../common/ui/FlexBox";
 import axios from "axios";
 import Menus from "../Menus";
+import { device } from "../../common/ui/Resposive";
 
 const Wrapper = styled(FlexBox)`
   border-radius: 0.5rem;
@@ -29,18 +30,16 @@ const CRUDbox = styled(FlexBox)`
 
 const OptionBox = styled(FlexBox)`
   position: absolute;
-  top: ${({ change }) => (change ? "-10rem" : "60%")};
-  left: 50%;
+  top: ${({ change }) => (change ? "-10rem" : "40%")};
+  left: 40%;
 
   z-index: 10;
   cursor: pointer;
-  /* Add styling for the OptionBox component */
+  @media ${device.laptop} {
+    left: 50%;
+  }
 `;
 
-const TaskBox = styled(FlexBox)`
-  background-color: white;
-  border: 1px solid black;
-`;
 const SingleTask = ({
   projects,
   setProjects,

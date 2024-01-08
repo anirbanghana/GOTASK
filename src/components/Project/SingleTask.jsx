@@ -115,19 +115,21 @@ const SingleTask = ({
     }
 
     const { spaceBelow, spaceAbove } = distances;
+    console.log(spaceBelow, spaceAbove, "space", optionOpen);
 
     if (spaceAbove - spaceBelow > 50) {
       // setChange(true);
       setChange((prevChange) => {
         if (!prevChange) {
-          setOptionOpen(true);
+          // setOptionOpen(true);
         }
         return true;
       });
-      console.log(change, "change"); // Create a state variable and update its value here
-    } else {
-      setOptionOpen(true);
+      console.log(change, "change");
     }
+    // } else {
+    setOptionOpen(true);
+    // }
   };
   useEffect(() => {
     console.log("Change value after update:", change);
@@ -170,7 +172,6 @@ const SingleTask = ({
       !optionRef.current.contains(e.target)
     ) {
       setOptionOpen(false);
-      // setParentElement(null);
     }
   };
 

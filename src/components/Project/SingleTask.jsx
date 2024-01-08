@@ -195,6 +195,11 @@ const SingleTask = ({
           style={{ textDecoration: isChecked ? "line-through" : "none" }}
         >
           <input
+            type="checkbox"
+            checked={isChecked}
+            onChange={handleEditTask}
+          />
+          <input
             type="text"
             value={editedText}
             onChange={handleEditInputChange}

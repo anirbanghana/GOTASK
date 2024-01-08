@@ -221,9 +221,7 @@ const ProjectCard = ({
             userId: newProject.userId,
             todoId: projectId,
             name: inputTexts[projectId],
-            Date: today
-              ? currentDate.toLocaleString()
-              : tomorrowDate.toLocaleString(),
+            isToday: today,
           }
         );
         const updatedProjects = projects.map((project) => {
@@ -444,18 +442,6 @@ const ProjectCard = ({
       }
     }
     return true;
-  };
-
-  const handleTarget = (event) => {
-    // console.log(event.target.getBoundingClientRect().left, "left");
-    // console.log(event.currentTarget.getBoundingClientRect().left, "left");
-    console.log(
-      event,
-      divRef.current.getBoundingClientRect().bottom,
-      "inner div"
-    );
-    // console.log(event.target.getBoundingClientRect().bottom, "main Div ");
-    console.log(event.screenY, "main Div ");
   };
 
   return (

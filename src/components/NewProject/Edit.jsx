@@ -8,6 +8,7 @@ const Wrapper = styled.div`
   background-color: white;
   margin: auto;
   padding: 10px;
+  // z-index: 10;
 `;
 
 const InputBox = styled.div`

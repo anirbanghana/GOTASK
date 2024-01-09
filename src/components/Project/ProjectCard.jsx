@@ -113,6 +113,7 @@ const ProjectCard = ({
   const [inputTexts, setInputTexts] = useState({});
   const [isEditing, setIsEditing] = useState(false);
   const [optionOpen, setOptionOpen] = useState(false);
+  const [isEdited, setIsEdited] = useState(false);
   const divRef = useRef(null);
   const projectClick = (id, filter) => {
     const project = projects.filter((project) => project._id === id);
@@ -120,7 +121,8 @@ const ProjectCard = ({
       setEditId(id);
       const newProject = projects.filter((project) => project._id === id);
       setSelectedProject(newProject[0].todoName);
-      openModal();
+      setIsEdited(true);
+      // openModal();
     } else if (filter === "Delete") {
       setEditId(id);
       handleDeleteProject(id);
@@ -382,6 +384,39 @@ const ProjectCard = ({
 
     setProjects(updatedProjects);
   };
+  const handleUpdateProject = async (todoId, editedProject) => {
+    if (editedProject.trim() !== "") {
+      const newProject = projects.filter((project) => project._id === todoId);
+      console.log(newProject[0], todoId, editedProject, "this is new project");
+      try {
+        const response = await axios.patch(
+          "https://todo-backend-daem.vercel.app/update-todo",
+          {
+            userId: userId,
+            todoId: todoId,
+            todoName: editedProject,
+          }
+        );
+
+        const updatedData = response.data.todo;
+
+        setProjects((prevProjects) => {
+          const updatedProjects = prevProjects.map((project) => {
+            if (project._id === updatedData._id) {
+              return updatedData;
+            }
+            return project;
+          });
+          return updatedProjects;
+        });
+        console.log(updatedData, "after editing");
+      } catch (error) {
+        console.log("Error in updating", error);
+      }
+    }
+    setmodalOpen(false);
+    setIsEdited(false);
+  };
   const handleTaskHighlightChange = async (itemId, heading) => {
     console.log(itemId, heading);
     const newProject = projects.filter(
@@ -446,10 +481,43 @@ const ProjectCard = ({
 
   return (
     <>
+      {/* {modalOpen && (
+        <Modal
+          M1
+          height="50%"
+          children={
+            <Edit
+              userId={userId}
+              close={closeModal}
+              projects={projects}
+              setProjects={setProjects}
+              selectedProject={selectedProject}
+              todoId={editId}
+              setmodalOpen={setmodalOpen}
+            />
+          }
+          togglePopup={modalOpen}
+          justifyContent="center"
+        />
+      )} */}
       {projects?.map((item) => (
         <Wrapper key={item._id}>
           <HeadBox>
-            <H3>{item.todoName}</H3>
+            {editId === item._id && isEdited ? (
+              <input
+                type="text"
+                value={selectedProject}
+                onChange={(e) => setSelectedProject(e.target.value)}
+                onBlur={() => handleUpdateProject(item._id, selectedProject)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    handleUpdateProject(item._id, selectedProject);
+                  }
+                }}
+              />
+            ) : (
+              <H3>{item.todoName}</H3>
+            )}
             <TopOption>
               <MoreHorizOutlinedIcon
                 onClick={() => {
@@ -467,25 +535,7 @@ const ProjectCard = ({
               )}
             </TopOption>
           </HeadBox>
-          {modalOpen && (
-            <Modal
-              M1
-              height="50%"
-              children={
-                <Edit
-                  userId={userId}
-                  close={closeModal}
-                  projects={projects}
-                  setProjects={setProjects}
-                  selectedProject={selectedProject}
-                  todoId={editId}
-                  setmodalOpen={setmodalOpen}
-                />
-              }
-              togglePopup={modalOpen}
-              justifyContent="center"
-            />
-          )}
+
           <AddingSingleTask>
             <input
               type="checkbox"

@@ -20,8 +20,10 @@ const FlexScroll = styled(FlexBox)`
   overflow-x: auto;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  z-index: 1;
   &::-webkit-scrollbar {
     display: none;
+    z-index: 1;
   }
 `;
 

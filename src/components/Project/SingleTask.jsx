@@ -62,7 +62,6 @@ const SingleTask = ({
   moveToday,
   divRef,
 }) => {
-  // const [isHighlighted, setHighlighted] = useState(false);
   const [optionOpen, setOptionOpen] = useState(false);
 
   const [editedText, setEditedText] = useState(text);
@@ -74,11 +73,10 @@ const SingleTask = ({
   const [spaceAboveNew, setSpaceAbove] = useState(0);
   const [spaceBelowNew, setSpaceBelow] = useState(0);
   const [optionTop, setOptionTop] = useState(0);
-  // let parentElement = 5;
 
   const data = [
     "Move to Tomorrow",
-    "Highlights",
+    "Highlight",
     "Edit",
     "Delete",
     "Move to Today",
@@ -143,7 +141,7 @@ const SingleTask = ({
       console.log(index, editId, "edit is clicked");
     } else if (filterType === "Delete") {
       DeleteTask();
-    } else if (filterType === "Highlights") {
+    } else if (filterType === "Highlight") {
       console.log("highlight is clicked", isHighlighted);
       setTaskHighlight();
     } else if (filterType === "Move to Tomorrow") {
